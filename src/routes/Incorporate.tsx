@@ -33,19 +33,8 @@ export default function Incorporate() {
           <CardHeader title="Company" sub="Prefilled from this workspace" />
           <Field label="Legal name">{w.name}</Field>
           <Field label="Entity type">Delaware C-Corp</Field>
-          <Field label="Description">
-            <p className="font-medium">{w.pitch}</p>
-            {(['problem', 'what', 'who', 'model', 'stage'] as const)
-              .filter((k) => (w.identity?.[k] ?? '').trim())
-              .map((k) => (
-                <div key={k} className="mt-3">
-                  <p className="text-xs text-muted">
-                    {{ problem: 'The problem', what: 'What it does', who: 'Who it is for',
-                       model: 'How it makes money', stage: 'Where it is now' }[k]}
-                  </p>
-                  <p className="mt-0.5 whitespace-pre-wrap text-ink/80">{w.identity[k]}</p>
-                </div>
-              ))}
+          <Field label="Business purpose">
+            <p className="whitespace-pre-wrap">{w.pitch}</p>
           </Field>
           <Field label="Founders">
             <ul className="space-y-1.5">

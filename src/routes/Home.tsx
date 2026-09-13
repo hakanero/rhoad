@@ -194,7 +194,7 @@ function PitchCard() {
       />
       <div className="px-4 py-3">
         {pitch ? (
-          <p className="line-clamp-4 text-[13px] leading-relaxed text-ink/80">{pitch}</p>
+          <p className="line-clamp-3 text-[13px] leading-relaxed">{pitch}</p>
         ) : (
           <p className="text-xs text-faint">Not written yet.</p>
         )}

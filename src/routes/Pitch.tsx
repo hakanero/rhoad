@@ -52,7 +52,7 @@ export default function Pitch() {
     <>
       <PageHeader
         title="Pitch"
-        sub="The company's description. Recorded with each post as it stood at the time."
+        sub="The business purpose, and the longer profile behind it."
         action={
           <span className="text-xs text-muted tabular-nums">
             {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' : ''}
@@ -62,18 +62,25 @@ export default function Pitch() {
 
       <div className="grid grid-cols-[minmax(0,1fr)_280px] gap-5">
         <div className="space-y-4">
-          <Card className="p-5">
-            <label className="block">
-              <span className="text-xs font-medium text-muted">In one line</span>
-              <input
-                value={oneLiner}
-                onChange={(e) => setOneLiner(e.target.value)}
-                placeholder={`${w.name} is…`}
-                className="mt-2 w-full bg-transparent text-[17px] font-medium tracking-tight
-                  outline-none placeholder:font-normal placeholder:text-faint"
-              />
-            </label>
+          <Card>
+            <CardHeader
+              title="Business purpose"
+              sub="One or two sentences. This is the description used on incorporation."
+            />
+            <textarea
+              rows={2}
+              value={oneLiner}
+              onChange={(e) => setOneLiner(e.target.value)}
+              placeholder={`${w.name} is…`}
+              className="block w-full resize-none bg-transparent px-4 py-3 text-[16px]
+                font-medium leading-relaxed tracking-tight outline-none
+                placeholder:font-normal placeholder:text-faint"
+            />
           </Card>
+
+          <p className="pt-3 text-[11px] font-medium tracking-wide text-faint uppercase">
+            Profile
+          </p>
 
           {SECTIONS.map((s) => (
             <Card key={s.key}>
@@ -99,7 +106,7 @@ export default function Pitch() {
               </div>
             </div>
             <ul className="px-4 py-3 text-[13px]">
-              {[{ title: 'In one line', done: !!oneLiner.trim() },
+              {[{ title: 'Business purpose', done: !!oneLiner.trim() },
                 ...SECTIONS.map((s) => ({ title: s.title, done: !!(identity[s.key] ?? '').trim() }))
               ].map((r) => (
                 <li key={r.title} className="flex items-center gap-2 py-1">
@@ -116,21 +123,21 @@ export default function Pitch() {
             <CardHeader title="Where this is used" />
             <ul className="divide-y divide-line text-[13px]">
               <li className="px-4 py-2.5">
-                <p className="font-medium">Content</p>
+                <p className="font-medium">Incorporation</p>
                 <p className="mt-0.5 text-xs text-muted">
-                  Recorded with each post as it stood at the time.
+                  Business purpose only. The profile is not transferred.
                 </p>
               </li>
               <li className="px-4 py-2.5">
                 <p className="font-medium">Next steps</p>
                 <p className="mt-0.5 text-xs text-muted">
-                  The one-line description satisfies the description requirement.
+                  A business purpose satisfies the description requirement.
                 </p>
               </li>
               <li className="px-4 py-2.5">
-                <p className="font-medium">Incorporation</p>
+                <p className="font-medium">Content</p>
                 <p className="mt-0.5 text-xs text-muted">
-                  Transferred as the company description.
+                  Business purpose and profile are recorded with each post as they stood.
                 </p>
               </li>
             </ul>

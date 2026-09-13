@@ -15,7 +15,7 @@ export default function NextSteps() {
   // description gate anything; the rest is reported and left alone.
   const rows = [
     { label: 'Company name', value: hasName ? ws.workspace!.name : 'Not set', done: hasName },
-    { label: 'Description', value: hasPitch ? 'Written' : 'Not written', done: hasPitch },
+    { label: 'Business purpose', value: hasPitch ? 'Written' : 'Not written', done: hasPitch },
     { label: 'Collaborators', value: collaborators > 0 ? `${collaborators}` : 'None',
       done: collaborators > 0 },
     { label: 'Logged expenses', value: expenses > 0 ? `${expenses}` : 'None',
@@ -27,7 +27,7 @@ export default function NextSteps() {
   ]
 
   const ready = hasName && hasPitch
-  const missing = [!hasName && 'a name', !hasPitch && 'a description'].filter(Boolean)
+  const missing = [!hasName && 'a name', !hasPitch && 'a business purpose'].filter(Boolean)
 
   return (
     <>
@@ -58,7 +58,7 @@ export default function NextSteps() {
         </p>
         <p className="mt-1 text-sm text-muted">
           {ready
-            ? 'Name, description, and founders will be transferred.'
+            ? 'Name, business purpose, and founders will be transferred.'
             : `Requires ${missing.join(' and ')}.`}
         </p>
         <div className="mt-4">
