@@ -24,7 +24,7 @@ export default function NewWorkspace() {
     <div className="mx-auto flex min-h-full max-w-sm flex-col justify-center px-6">
       <h1 className="mb-1 text-lg tracking-tight">New workspace</h1>
       <p className="mb-6 text-sm text-muted">
-        A working name is fine; it can change later.
+        The name can be changed later.
       </p>
       <Card className="p-5">
       <form onSubmit={create} className="space-y-3">

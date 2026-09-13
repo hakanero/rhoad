@@ -23,7 +23,7 @@ export default function Content() {
     <>
       <PageHeader
         title="Content"
-        sub="What has been published about the company. Each post keeps the pitch as it read at the time."
+        sub="Posts published about the company. Each records the pitch as it stood at the time."
         action={
           !composing && (
             <Button onClick={() => setComposing(true)}>Add post</Button>
@@ -55,7 +55,7 @@ export default function Content() {
           <Empty
             icon={<I.content />}
             title="Nothing published yet"
-            sub="Log a post to keep a record of what has been said publicly."
+            sub="Logged posts appear here with the pitch as it stood at the time."
           />
         </Card>
       ) : (

@@ -31,7 +31,7 @@ export default function Composer({
         <textarea
           rows={2}
           required
-          placeholder="What happened?"
+          placeholder="Add an entry"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {

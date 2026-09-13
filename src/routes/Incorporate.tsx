@@ -20,7 +20,7 @@ export default function Incorporate() {
     <>
       <PageHeader
         title="Incorporate with Rho"
-        sub="Review what will be carried over. Nothing is filed until you continue."
+        sub="Review the information to be transferred. No filing occurs until you continue."
         action={
           <Link to={`/w/${w.share_slug}/next`} className="text-xs text-muted hover:text-ink">
             Back
@@ -76,8 +76,8 @@ export default function Incorporate() {
         <Card className="self-start p-5">
           <p className="text-sm font-medium">Ready to file</p>
           <p className="mt-1 text-sm text-muted">
-            Rho will create the entity, open a business account, and record founder
-            advances as amounts owed.
+            Rho will form the entity, open a business account, and record founder
+            advances as amounts owed by the company.
           </p>
           <div className="mt-4">
             <Button onClick={() => alert('Demo only — no filing is submitted.')}>

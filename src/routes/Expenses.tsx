@@ -20,7 +20,7 @@ export default function Expenses() {
     <>
       <PageHeader
         title="Expenses"
-        sub="Money put in so far, and what's expected to follow."
+        sub="Amounts paid to date and expected future costs."
       />
 
       <div className="mb-5 grid grid-cols-3 gap-4">
@@ -74,7 +74,7 @@ export default function Expenses() {
         <CardHeader title="Ledger" sub={`${rows.length} ${rows.length === 1 ? 'item' : 'items'}`} />
         {rows.length === 0 ? (
           <Empty icon={<I.receipt />} title="No expenses yet"
-            sub="Anything paid for or expected to cost money appears here." />
+            sub="Payments and expected costs appear here." />
         ) : (
           <table className="w-full text-[13px]">
             <thead>

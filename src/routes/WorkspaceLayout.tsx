@@ -137,7 +137,7 @@ function NamePrompt({ userId, onDone }: { userId: string; onDone: () => void }) 
   }
   return (
     <Card className="mb-6 flex items-center gap-3 px-4 py-3">
-      <p className="text-sm">What should we call you?</p>
+      <p className="text-sm font-medium">Display name</p>
       <form onSubmit={save} className="flex flex-1 items-center gap-2">
         <Input
           autoFocus

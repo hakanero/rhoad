@@ -7,15 +7,15 @@ import type { Identity, IdentityKey } from '../lib/types'
 
 const SECTIONS: { key: IdentityKey; title: string; hint: string; rows: number }[] = [
   { key: 'problem', title: 'The problem', rows: 4,
-    hint: 'What is broken, slow, or expensive today, and for whom.' },
+    hint: 'The problem being addressed, and who has it.' },
   { key: 'what', title: 'What it does', rows: 5,
-    hint: 'The product, in concrete terms. What someone actually gets.' },
+    hint: 'The product or service, described concretely.' },
   { key: 'who', title: 'Who it is for', rows: 3,
-    hint: 'The first customer, not the eventual market.' },
+    hint: 'The initial customer segment.' },
   { key: 'model', title: 'How it makes money', rows: 3,
-    hint: 'Even if it is a guess. Subscription, usage, take rate, none yet.' },
+    hint: 'Revenue model, if determined.' },
   { key: 'stage', title: 'Where it is now', rows: 3,
-    hint: 'Idea, prototype, first users, first revenue.' },
+    hint: 'Current stage: idea, prototype, initial users, or revenue.' },
 ]
 
 export default function Pitch() {
@@ -52,7 +52,7 @@ export default function Pitch() {
     <>
       <PageHeader
         title="Pitch"
-        sub="What this company is, in its own words. Posts keep a copy of this as it read when they were logged."
+        sub="The company's description. Recorded with each post as it stood at the time."
         action={
           <span className="text-xs text-muted tabular-nums">
             {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' : ''}
@@ -118,19 +118,19 @@ export default function Pitch() {
               <li className="px-4 py-2.5">
                 <p className="font-medium">Content</p>
                 <p className="mt-0.5 text-xs text-muted">
-                  Every post records the pitch as it read at the time.
+                  Recorded with each post as it stood at the time.
                 </p>
               </li>
               <li className="px-4 py-2.5">
                 <p className="font-medium">Next steps</p>
                 <p className="mt-0.5 text-xs text-muted">
-                  The one-liner is what counts as a description.
+                  The one-line description satisfies the description requirement.
                 </p>
               </li>
               <li className="px-4 py-2.5">
                 <p className="font-medium">Incorporation</p>
                 <p className="mt-0.5 text-xs text-muted">
-                  Carried over as the company description.
+                  Transferred as the company description.
                 </p>
               </li>
             </ul>

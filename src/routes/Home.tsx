@@ -37,7 +37,7 @@ export default function Home() {
               <Empty
                 icon={<I.clock />}
                 title="No activity yet"
-                sub="Entries you log appear here, newest first."
+                sub="Logged entries appear here, newest first."
               />
             ) : (
               <div className="divide-y divide-line">
@@ -83,7 +83,7 @@ function Stats() {
     },
     {
       label: 'People', value: String(ws.members.length),
-      sub: ws.members.length === 1 ? 'Just you' : 'Contributing',
+      sub: ws.members.length === 1 ? 'Sole member' : 'Members',
     },
   ]
 

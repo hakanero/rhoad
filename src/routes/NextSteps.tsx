@@ -30,7 +30,7 @@ export default function NextSteps() {
     <>
       <PageHeader
         title="Next steps"
-        sub="What the workspace has on record, and what it can become."
+        sub="Information on record and available actions."
       />
       <div className="grid max-w-3xl grid-cols-[minmax(0,1fr)_320px] gap-5">
       <Card className="divide-y divide-line self-start">
@@ -51,11 +51,11 @@ export default function NextSteps() {
       <Card className="self-start p-5">
         <p className="text-sm font-medium">Incorporate</p>
         <p className="mt-1 text-sm text-muted">
-          Rho can take this workspace and file it as a company.
+          Rho can incorporate this company using the information in this workspace.
         </p>
         <p className="mt-1 text-sm text-muted">
           {ready
-            ? 'Name, description, and founders will be carried over.'
+            ? 'Name, description, and founders will be transferred.'
             : `Requires ${missing.join(' and ')}.`}
         </p>
         <div className="mt-4">
