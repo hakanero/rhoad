@@ -67,13 +67,14 @@ export function contributionSplit(
 
 export function ledgerCsv(entries: Entry[], byId: Map<string, Member>): string {
   const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`
-  const head = ['date', 'description', 'category', 'paid_by', 'amount', 'reimbursed_at',
-    'upcoming_amount', 'upcoming_from', 'receipt_url']
+  const head = ['date', 'type', 'description', 'category', 'member', 'source', 'amount',
+    'reimbursed_at', 'upcoming_amount', 'upcoming_from', 'receipt_url']
   const rows = entries
-    .filter((e) => e.is_expense || e.is_free_tier)
+    .filter((e) => e.is_expense || e.is_free_tier || e.is_income)
     .map((e) => [
-      e.created_at.slice(0, 10), e.text, e.category, byId.get(e.member_id)?.name ?? '',
-      e.is_expense ? Number(e.amount ?? 0).toFixed(2) : '',
+      e.created_at.slice(0, 10), e.is_income ? 'income' : 'expense', e.text, e.category,
+      byId.get(e.member_id)?.name ?? '', e.source ?? '',
+      e.is_expense || e.is_income ? Number(e.amount ?? 0).toFixed(2) : '',
       e.reimbursed_at?.slice(0, 10) ?? '',
       e.is_free_tier && e.expected_cost != null ? Number(e.expected_cost).toFixed(2) : '',
       e.converts_at ?? '', e.receipt_url ?? '',

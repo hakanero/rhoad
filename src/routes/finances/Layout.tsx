@@ -3,9 +3,11 @@ import { useWs } from '../../lib/ctx'
 import { PageHeader } from '../../components/ui'
 
 const TABS = [
-  { to: '', label: 'Ledger', end: true },
-  { to: 'founders', label: 'Founders', end: false },
+  { to: '', label: 'Expenses', end: true },
+  { to: 'income', label: 'Income', end: false },
+  { to: 'budget', label: 'Budget', end: false },
   { to: 'projection', label: 'Projection', end: false },
+  { to: 'founders', label: 'Founders', end: false },
 ]
 
 export default function FinancesLayout() {
@@ -19,7 +21,7 @@ export default function FinancesLayout() {
     <>
       <PageHeader
         title="Finances"
-        sub="Amounts paid, amounts owed to founders, and expected future costs."
+        sub="Money paid, money received, and what is expected."
       />
       <nav className="mb-6 flex gap-5 border-b border-line">
         {TABS.map((t) => (

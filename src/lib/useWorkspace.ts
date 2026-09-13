@@ -10,12 +10,14 @@ export type WorkspaceData = {
   replies: Reply[]
   invested: number
   queued: number
+  received: number
   perMember: Record<string, MemberLedger>
   loading: boolean
   error: string | null
   refresh: () => Promise<void>
   setPitchLocal: (pitch: string) => void
   setIdentityLocal: (identity: Identity) => void
+  patchWorkspace: (patch: Partial<Workspace>) => void
 }
 
 export function useWorkspace(slug: string | undefined): WorkspaceData {
@@ -26,6 +28,7 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
   const [replies, setReplies] = useState<Reply[]>([])
   const [invested, setInvested] = useState(0)
   const [queued, setQueued] = useState(0)
+  const [received, setReceived] = useState(0)
   const [perMember, setPerMember] = useState<Record<string, MemberLedger>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -79,6 +82,7 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
     setReplies(r.data ?? [])
     setInvested(Number(t.data?.invested ?? 0))
     setQueued(Number(t.data?.queued ?? 0))
+    setReceived(Number(t.data?.received ?? 0))
     setPerMember(
       Object.fromEntries(
         (mt.data ?? []).map((r: any) => [r.member_id, {
@@ -101,6 +105,10 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
     (pitch: string) => setWorkspace((w) => (w ? { ...w, pitch } : w)),
     [],
   )
+  const patchWorkspace = useCallback(
+    (patch: Partial<Workspace>) => setWorkspace((w) => (w ? { ...w, ...patch } : w)),
+    [],
+  )
   const setIdentityLocal = useCallback(
     (identity: Identity) => setWorkspace((w) => (w ? { ...w, identity } : w)),
     [],
@@ -108,7 +116,7 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
 
   return {
     workspace, members, entries, posts, replies,
-    invested, queued, perMember,
-    loading, error, refresh, setPitchLocal, setIdentityLocal,
+    invested, queued, received, perMember,
+    loading, error, refresh, setPitchLocal, setIdentityLocal, patchWorkspace,
   }
 }

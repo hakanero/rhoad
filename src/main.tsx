@@ -17,6 +17,8 @@ import Ledger from './routes/finances/Ledger'
 import Founders from './routes/finances/Founders'
 import Statement from './routes/finances/Statement'
 import Projection from './routes/finances/Projection'
+import Income from './routes/finances/Income'
+import Budget from './routes/finances/Budget'
 import Content from './routes/Content'
 import NextSteps from './routes/NextSteps'
 import Incorporate from './routes/Incorporate'
@@ -47,6 +49,8 @@ createRoot(document.getElementById('root')!).render(
             <Route index element={<Home />} />
             <Route path="finances" element={<FinancesLayout />}>
               <Route index element={<Ledger />} />
+              <Route path="income" element={<Income />} />
+              <Route path="budget" element={<Budget />} />
               <Route path="founders" element={<Founders />} />
               <Route path="founders/:memberId" element={<Statement />} />
               <Route path="projection" element={<Projection />} />

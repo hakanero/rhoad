@@ -20,13 +20,13 @@ export default function NextSteps() {
       done: collaborators > 0 },
     { label: 'Logged expenses', value: expenses > 0 ? `${expenses}` : 'None',
       done: expenses > 0 },
-    { label: 'Owed to founders',
-      value: money(Object.values(ws.perMember).reduce((a, l) => a + l.outstanding, 0)),
-      done: expenses > 0 },
+    { label: 'Income received', value: ws.received > 0 ? money(ws.received) : 'None',
+      done: ws.received > 0 },
     { label: 'Published content', value: posts > 0 ? `${posts}` : 'None', done: posts > 0 },
   ]
 
   const ready = hasName && hasPitch
+  const incorporated = !!ws.workspace!.incorporated_at
   const missing = [!hasName && 'a name', !hasPitch && 'a business purpose'].filter(Boolean)
 
   return (
@@ -51,26 +51,55 @@ export default function NextSteps() {
         ))}
       </Card>
 
+      <div className="space-y-5">
       <Card className="self-start p-5">
-        <p className="text-sm font-medium">Incorporate</p>
-        <p className="mt-1 text-sm text-muted">
-          Rho can incorporate this company using the information in this workspace.
-        </p>
-        <p className="mt-1 text-sm text-muted">
-          {ready
-            ? 'Name, business purpose, and founders will be transferred.'
-            : `Requires ${missing.join(' and ')}.`}
-        </p>
-        <div className="mt-4">
-          {ready ? (
-            <Link to={`/w/${ws.workspace!.share_slug}/incorporate`}>
-              <Button>Incorporate with Rho</Button>
-            </Link>
-          ) : (
-            <Button disabled>Incorporate with Rho</Button>
-          )}
-        </div>
+        {incorporated ? (
+          <>
+            <p className="text-sm font-medium">Incorporated</p>
+            <p className="mt-1 text-sm text-muted">
+              Formed on {(ws.workspace!.incorporated_at ?? '').slice(0, 10)} through Rho.
+            </p>
+            <div className="mt-4">
+              <Link to={`/w/${ws.workspace!.share_slug}/incorporate`}>
+                <Button variant="quiet">View</Button>
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-sm font-medium">Incorporate</p>
+            <p className="mt-1 text-sm text-muted">
+              Rho can incorporate this company using the information in this workspace.
+            </p>
+            <p className="mt-1 text-sm text-muted">
+              {ready
+                ? 'Name, business purpose, and founders will be transferred.'
+                : `Requires ${missing.join(' and ')}.`}
+            </p>
+            <div className="mt-4">
+              {ready ? (
+                <Link to={`/w/${ws.workspace!.share_slug}/incorporate`}>
+                  <Button>Incorporate with Rho</Button>
+                </Link>
+              ) : (
+                <Button disabled>Incorporate with Rho</Button>
+              )}
+            </div>
+          </>
+        )}
       </Card>
+
+      {ws.received > 0 && !incorporated && (
+        <Card className="p-4">
+          <p className="text-xs font-medium">On income</p>
+          <p className="mt-1 text-xs leading-relaxed text-muted">
+            {money(ws.received)} has been received without an entity in place. Money
+            received this way is generally received by a person rather than a company;
+            treatment depends on structure and jurisdiction.
+          </p>
+        </Card>
+      )}
+      </div>
       </div>
     </>
   )

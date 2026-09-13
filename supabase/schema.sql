@@ -278,3 +278,21 @@ select
   coalesce(sum(amount) filter (where is_expense and reimbursed_at is null), 0)::numeric(12,2) as outstanding
 from entries
 group by workspace_id, member_id;
+
+-- budget, income, incorporation state -----------------------------------
+alter table workspaces add column if not exists budget numeric(12,2);
+alter table workspaces add column if not exists incorporated_at timestamptz;
+alter table entries add column if not exists is_income boolean not null default false;
+alter table entries add column if not exists source text;
+alter table entries add column if not exists reimbursement_ref text;
+
+drop view if exists workspace_totals;
+create view workspace_totals
+with (security_invoker = true) as
+select
+  workspace_id,
+  coalesce(sum(amount) filter (where is_expense), 0)::numeric(12,2) as invested,
+  coalesce(sum(expected_cost) filter (where is_free_tier), 0)::numeric(12,2) as queued,
+  coalesce(sum(amount) filter (where is_income), 0)::numeric(12,2) as received
+from entries
+group by workspace_id;

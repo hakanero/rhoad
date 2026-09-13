@@ -14,10 +14,10 @@ export default function Ledger() {
   const byId = new Map(ws.members.map((m) => [m.id, m]))
   const [filter, setFilter] = useState<Category | 'all'>('all')
 
-  const all = ws.entries.filter((e) => e.is_expense || e.is_free_tier)
+  const all = ws.entries.filter((e) => !e.is_income && (e.is_expense || e.is_free_tier))
+  const upcoming = all.filter((e) => e.is_free_tier)
   const rows = filter === 'all' ? all : all.filter((e) => e.category === filter)
   const paid = all.filter((e) => e.is_expense)
-  const outstanding = sum(Object.values(ws.perMember).map((l) => l.outstanding))
 
   const byCategory = CATEGORIES
     .map((c) => ({ c, total: sum(paid.filter((e) => e.category === c).map((e) => Number(e.amount))) }))
@@ -45,12 +45,12 @@ export default function Ledger() {
           </p>
         </Card>
         <Card className="px-4 py-3.5">
-          <p className="text-xs text-muted">Owed to founders</p>
+          <p className="text-xs text-muted">Upcoming</p>
           <p className="mt-1.5 text-[22px] font-semibold tracking-tight tabular-nums">
-            {money(outstanding)}
+            {money(ws.queued)}
           </p>
           <p className="mt-1 text-xs text-faint">
-            {money(ws.invested - outstanding)} reimbursed
+            {upcoming.length} expected {upcoming.length === 1 ? 'cost' : 'costs'} per month
           </p>
         </Card>
         <Card className="px-4 py-3.5">

@@ -10,6 +10,8 @@ export type Workspace = {
   name: string
   pitch: string | null
   identity: Identity
+  budget: number | null
+  incorporated_at: string | null
   share_slug: string
   created_at: string
 }
@@ -46,6 +48,9 @@ export type Entry = {
   converts_at: string | null
   category: Category
   reimbursed_at: string | null
+  is_income: boolean
+  source: string | null
+  reimbursement_ref: string | null
   created_at: string
 }
 

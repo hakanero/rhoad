@@ -78,8 +78,8 @@ function Stats() {
       sub: `${freeTiers.length} expected ${freeTiers.length === 1 ? 'cost' : 'costs'}`,
     },
     {
-      label: 'Expenses', value: String(expenses.length),
-      sub: `${expenses.filter((e) => e.receipt_url).length} with receipts`,
+      label: 'Received', value: money(ws.received),
+      sub: ws.received > 0 ? 'Kept separate from invested' : 'No income recorded',
     },
     {
       label: 'People', value: String(ws.members.length),
@@ -257,6 +257,12 @@ function EntryRow({ e, byId }: { e: Entry; byId: Map<string, Member> }) {
               <span className="ml-auto rounded-md bg-umber/8 px-1.5 py-0.5 text-[12px]
                 font-medium tabular-nums text-umber">
                 {money(Number(e.amount ?? 0))}
+              </span>
+            )}
+            {e.is_income && (
+              <span className="ml-auto rounded-md bg-slate/10 px-1.5 py-0.5 text-[12px]
+                font-medium tabular-nums text-slate">
+                +{money(Number(e.amount ?? 0))}{e.source ? ` · ${e.source}` : ''}
               </span>
             )}
           </div>
