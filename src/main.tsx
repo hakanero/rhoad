@@ -12,7 +12,11 @@ import Join from './routes/Join'
 import WorkspaceLayout from './routes/WorkspaceLayout'
 import Home from './routes/Home'
 import Pitch from './routes/Pitch'
-import Expenses from './routes/Expenses'
+import FinancesLayout from './routes/finances/Layout'
+import Ledger from './routes/finances/Ledger'
+import Founders from './routes/finances/Founders'
+import Statement from './routes/finances/Statement'
+import Projection from './routes/finances/Projection'
 import Content from './routes/Content'
 import NextSteps from './routes/NextSteps'
 import Incorporate from './routes/Incorporate'
@@ -41,7 +45,12 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/join/:slug" element={<RequireAuth><Join /></RequireAuth>} />
           <Route path="/w/:slug" element={<RequireAuth><WorkspaceLayout /></RequireAuth>}>
             <Route index element={<Home />} />
-            <Route path="expenses" element={<Expenses />} />
+            <Route path="finances" element={<FinancesLayout />}>
+              <Route index element={<Ledger />} />
+              <Route path="founders" element={<Founders />} />
+              <Route path="founders/:memberId" element={<Statement />} />
+              <Route path="projection" element={<Projection />} />
+            </Route>
             <Route path="pitch" element={<Pitch />} />
             <Route path="content" element={<Content />} />
             <Route path="next" element={<NextSteps />} />

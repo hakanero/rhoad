@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { Button, Card, Input, Label } from './ui'
-import type { Member } from '../lib/types'
+import { Button, Card, Input, Label, Select } from './ui'
+import { CATEGORIES, CATEGORY_LABEL, type Category, type Member } from '../lib/types'
 
 export default function ExpenseComposer({
   workspaceId, me, onDone,
 }: { workspaceId: string; me: Member | null; onDone: () => void }) {
   const [text, setText] = useState('')
   const [amount, setAmount] = useState('')
+  const [category, setCategory] = useState<Category>('software')
   const [file, setFile] = useState<File | null>(null)
   const [upcoming, setUpcoming] = useState(false)
   const [expected, setExpected] = useState('')
@@ -35,6 +36,7 @@ export default function ExpenseComposer({
       workspace_id: workspaceId,
       member_id: me.id,
       text,
+      category,
       is_expense: amount !== '',
       amount: amount !== '' ? Number(amount) : null,
       receipt_url,
@@ -53,11 +55,17 @@ export default function ExpenseComposer({
   return (
     <Card className="mb-5 p-4">
       <form onSubmit={submit}>
-        <div className="grid grid-cols-[minmax(0,1fr)_140px] gap-3">
+        <div className="grid grid-cols-[minmax(0,1fr)_150px_140px] gap-3">
           <div>
             <Label>Description</Label>
             <Input required placeholder="Domain, subscription, tool…"
               value={text} onChange={(e) => setText(e.target.value)} />
+          </div>
+          <div>
+            <Label>Category</Label>
+            <Select value={category} onChange={(e) => setCategory(e.target.value as Category)}>
+              {CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_LABEL[c]}</option>)}
+            </Select>
           </div>
           <div>
             <Label>Amount paid</Label>

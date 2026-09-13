@@ -57,17 +57,18 @@ export default function Incorporate() {
               ))}
             </ul>
           </Field>
-          <Field label="Founder advances">
+          <Field label="Owed to founders">
             <ul className="space-y-1">
               {ws.members.map((m) => (
                 <li key={m.id} className="flex justify-between tabular-nums">
                   <span className="text-ink/80">{m.name ?? 'Unnamed'}</span>
-                  <span>{money(ws.perMember[m.id] ?? 0)}</span>
+                  <span>{money(ws.perMember[m.id]?.outstanding ?? 0)}</span>
                 </li>
               ))}
               <li className="flex justify-between border-t border-line pt-1 font-medium
                 tabular-nums">
-                <span>Total</span><span>{money(ws.invested)}</span>
+                <span>Total</span>
+                <span>{money(Object.values(ws.perMember).reduce((a, l) => a + l.outstanding, 0))}</span>
               </li>
             </ul>
           </Field>

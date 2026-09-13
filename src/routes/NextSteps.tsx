@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useWs } from '../lib/ctx'
-import { Button, Card, CardHeader, PageHeader } from '../components/ui'
+import { Button, Card, CardHeader, PageHeader, money } from '../components/ui'
 
 export default function NextSteps() {
   const ws = useWs()
@@ -19,6 +19,9 @@ export default function NextSteps() {
     { label: 'Collaborators', value: collaborators > 0 ? `${collaborators}` : 'None',
       done: collaborators > 0 },
     { label: 'Logged expenses', value: expenses > 0 ? `${expenses}` : 'None',
+      done: expenses > 0 },
+    { label: 'Owed to founders',
+      value: money(Object.values(ws.perMember).reduce((a, l) => a + l.outstanding, 0)),
       done: expenses > 0 },
     { label: 'Published content', value: posts > 0 ? `${posts}` : 'None', done: posts > 0 },
   ]

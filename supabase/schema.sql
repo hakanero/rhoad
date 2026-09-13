@@ -255,3 +255,26 @@ begin
   on conflict (id) do update set name = excluded.name;
 end
 $$;
+
+-- finances ------------------------------------------------------------
+alter table entries add column if not exists category text not null default 'other'
+  check (category in ('software','domain','legal','equipment','marketing','other'));
+alter table entries add column if not exists reimbursed_at timestamptz;
+alter table members add column if not exists intended_equity numeric(5,2);
+
+create policy e_update on entries for update using (is_member(workspace_id));
+create policy m_update on members for update using (is_member(workspace_id));
+
+-- Per-member ledger: what each founder has advanced, what the company
+-- has paid back, and the balance still owed.
+drop view if exists member_totals;
+create view member_totals
+with (security_invoker = true) as
+select
+  workspace_id,
+  member_id,
+  coalesce(sum(amount) filter (where is_expense), 0)::numeric(12,2) as invested,
+  coalesce(sum(amount) filter (where is_expense and reimbursed_at is not null), 0)::numeric(12,2) as reimbursed,
+  coalesce(sum(amount) filter (where is_expense and reimbursed_at is null), 0)::numeric(12,2) as outstanding
+from entries
+group by workspace_id, member_id;

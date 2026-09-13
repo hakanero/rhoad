@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
-import type { Entry, Identity, Member, Post, Reply, Workspace } from './types'
+import type { Entry, Identity, Member, MemberLedger, Post, Reply, Workspace } from './types'
 
 export type WorkspaceData = {
   workspace: Workspace | null
@@ -10,7 +10,7 @@ export type WorkspaceData = {
   replies: Reply[]
   invested: number
   queued: number
-  perMember: Record<string, number>
+  perMember: Record<string, MemberLedger>
   loading: boolean
   error: string | null
   refresh: () => Promise<void>
@@ -26,7 +26,7 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
   const [replies, setReplies] = useState<Reply[]>([])
   const [invested, setInvested] = useState(0)
   const [queued, setQueued] = useState(0)
-  const [perMember, setPerMember] = useState<Record<string, number>>({})
+  const [perMember, setPerMember] = useState<Record<string, MemberLedger>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -81,7 +81,11 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
     setQueued(Number(t.data?.queued ?? 0))
     setPerMember(
       Object.fromEntries(
-        (mt.data ?? []).map((r: any) => [r.member_id, Number(r.invested)]),
+        (mt.data ?? []).map((r: any) => [r.member_id, {
+          invested: Number(r.invested),
+          reimbursed: Number(r.reimbursed),
+          outstanding: Number(r.outstanding),
+        }]),
       ),
     )
     setError(null)

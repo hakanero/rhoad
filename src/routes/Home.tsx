@@ -150,13 +150,13 @@ function SpendChart() {
 
 function Contributions() {
   const ws = useWs()
-  const max = Math.max(...Object.values(ws.perMember), 1)
+  const max = Math.max(...Object.values(ws.perMember).map((l) => l.invested), 1)
   return (
     <Card>
       <CardHeader title="Contributions" sub="Per person" />
       <ul className="divide-y divide-line">
         {ws.members.map((m) => {
-          const v = ws.perMember[m.id] ?? 0
+          const v = ws.perMember[m.id]?.invested ?? 0
           return (
             <li key={m.id} className="px-4 py-2.5">
               <div className="flex items-center gap-2">

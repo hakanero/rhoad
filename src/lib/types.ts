@@ -20,8 +20,18 @@ export type Member = {
   user_id: string
   color: MemberColor
   name: string | null
+  intended_equity: number | null
   created_at: string
 }
+
+export const CATEGORIES = ['software', 'domain', 'legal', 'equipment', 'marketing', 'other'] as const
+export type Category = (typeof CATEGORIES)[number]
+export const CATEGORY_LABEL: Record<Category, string> = {
+  software: 'Software', domain: 'Domain', legal: 'Legal', equipment: 'Equipment',
+  marketing: 'Marketing', other: 'Other',
+}
+
+export type MemberLedger = { invested: number; reimbursed: number; outstanding: number }
 
 export type Entry = {
   id: string
@@ -34,6 +44,8 @@ export type Entry = {
   is_free_tier: boolean
   expected_cost: number | null
   converts_at: string | null
+  category: Category
+  reimbursed_at: string | null
   created_at: string
 }
 
