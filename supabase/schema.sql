@@ -296,3 +296,8 @@ select
   coalesce(sum(amount) filter (where is_income), 0)::numeric(12,2) as received
 from entries
 group by workspace_id;
+
+-- rhoad stops at the handoff. These were added for a post-incorporation
+-- flow that now lives in Rho; safe to drop.
+alter table entries drop column if exists reimbursement_ref;
+alter table workspaces drop column if exists incorporated_at;

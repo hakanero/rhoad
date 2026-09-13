@@ -1,44 +1,35 @@
-// Rho integration boundary. Everything the app needs from Rho goes
-// through this interface so the mock can be swapped for the real client
-// without touching callers.
+// Rho integration boundary. rhoad ends at the handoff: it prepares the
+// incorporation and hands the workspace's data to Rho. Everything after
+// formation (EIN, banking, reimbursement) is Rho's product, not this one.
 
-export type ReimbursementRequest = {
-  workspaceId: string
-  founderName: string
-  amount: number
-  memo: string
-  attachments: string[]   // receipt URLs, as supporting documents
-}
-
-export type ReimbursementResult = {
-  ref: string             // transfer reference
-  status: 'initiated'
-  initiatedAt: string
+export type IncorporationInput = {
+  name: string
+  purpose: string
+  state: string
+  entityType: string
+  founders: { name: string; equity: number | null }[]
+  founderAdvances: { name: string; amount: number }[]
 }
 
 export type IncorporationResult = {
-  entityId: string
-  accountId: string
-  completedAt: string
+  filingId: string
+  submittedAt: string
 }
 
 export interface RhoClient {
-  incorporate(input: { name: string; purpose: string; founders: string[] }): Promise<IncorporationResult>
-  initiateReimbursement(req: ReimbursementRequest): Promise<ReimbursementResult>
+  submitIncorporation(input: IncorporationInput): Promise<IncorporationResult>
 }
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
-const id = (p: string) => `${p}_${Math.random().toString(36).slice(2, 10)}`
 
 // Simulates the real flow's timing and shape. Nothing leaves the browser.
 export const mockRho: RhoClient = {
-  async incorporate() {
-    await wait(1400)
-    return { entityId: id('ent'), accountId: id('acct'), completedAt: new Date().toISOString() }
-  },
-  async initiateReimbursement() {
-    await wait(1100)
-    return { ref: id('trf'), status: 'initiated', initiatedAt: new Date().toISOString() }
+  async submitIncorporation() {
+    await wait(1600)
+    return {
+      filingId: `DE-${Math.floor(1e6 + Math.random() * 9e6)}`,
+      submittedAt: new Date().toISOString(),
+    }
   },
 }
 

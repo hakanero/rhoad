@@ -58,8 +58,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="pitch" element={<Pitch />} />
             <Route path="content" element={<Content />} />
             <Route path="next" element={<NextSteps />} />
-            <Route path="incorporate" element={<Incorporate />} />
           </Route>
+          <Route path="/w/:slug/incorporate" element={<RequireAuth><Incorporate /></RequireAuth>} />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </BrowserRouter>

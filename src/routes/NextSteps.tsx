@@ -26,7 +26,6 @@ export default function NextSteps() {
   ]
 
   const ready = hasName && hasPitch
-  const incorporated = !!ws.workspace!.incorporated_at
   const missing = [!hasName && 'a name', !hasPitch && 'a business purpose'].filter(Boolean)
 
   return (
@@ -53,19 +52,7 @@ export default function NextSteps() {
 
       <div className="space-y-5">
       <Card className="self-start p-5">
-        {incorporated ? (
-          <>
-            <p className="text-sm font-medium">Incorporated</p>
-            <p className="mt-1 text-sm text-muted">
-              Formed on {(ws.workspace!.incorporated_at ?? '').slice(0, 10)} through Rho.
-            </p>
-            <div className="mt-4">
-              <Link to={`/w/${ws.workspace!.share_slug}/incorporate`}>
-                <Button variant="quiet">View</Button>
-              </Link>
-            </div>
-          </>
-        ) : (
+        {(
           <>
             <p className="text-sm font-medium">Incorporate</p>
             <p className="mt-1 text-sm text-muted">
@@ -89,7 +76,7 @@ export default function NextSteps() {
         )}
       </Card>
 
-      {ws.received > 0 && !incorporated && (
+      {ws.received > 0 && (
         <Card className="p-4">
           <p className="text-xs font-medium">On income</p>
           <p className="mt-1 text-xs leading-relaxed text-muted">
