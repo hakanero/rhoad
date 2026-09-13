@@ -3,6 +3,7 @@ import { useAuth } from '../lib/auth'
 import { Button, Card } from '../components/ui'
 import { I } from '../components/icons'
 import AuthForm from '../components/AuthForm'
+import Logo from '../components/Logo'
 
 const FEATURES = [
   { icon: I.home, title: 'Activity log',
@@ -21,9 +22,7 @@ export default function Landing() {
   return (
     <div className="min-h-full">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-8 py-6">
-        <span className="text-[15px] font-semibold lowercase tracking-tight">
-          rhoad<span className="text-umber">.</span>
-        </span>
+        <Logo height={20} />
         <nav className="flex items-center gap-4 text-sm">
           {session ? (
             <Link to="/workspaces"><Button size="sm">Your workspaces</Button></Link>
@@ -35,9 +34,8 @@ export default function Landing() {
 
       <section className="mx-auto grid max-w-5xl grid-cols-1 gap-10 px-6 pt-10 pb-12 md:grid-cols-[1.3fr_1fr] md:gap-16 md:px-8 md:pt-16 md:pb-16">
         <div>
-          <p className="text-[48px] leading-none font-semibold lowercase tracking-tighter md:text-[64px]">
-            rhoad<span className="text-umber">.</span>
-          </p>
+          <Logo height={56} className="md:hidden" />
+          <Logo height={72} className="hidden md:block" />
           <p className="mt-3 text-[15px] text-umber">road from idea to company</p>
           <h1 className="mt-8 text-[28px] leading-[1.12] font-semibold tracking-tight md:text-[34px]">
             The workspace for a company before incorporation.
@@ -121,7 +119,7 @@ export default function Landing() {
 
       <footer className="mx-auto flex max-w-5xl items-center justify-between px-8 py-8
         text-xs text-faint">
-        <span>rhoad</span>
+        <Logo height={14} className="text-faint" />
         <span>road from idea to company</span>
       </footer>
     </div>

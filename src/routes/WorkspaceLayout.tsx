@@ -5,6 +5,7 @@ import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import { Avatar, Button, Card, Input, money } from '../components/ui'
 import { I } from '../components/icons'
+import Logo from '../components/Logo'
 
 const NAV = [
   { to: '', label: 'Home', icon: I.home, end: true },
@@ -55,9 +56,7 @@ export default function WorkspaceLayout() {
   const sidebar = (
     <>
       <div className="flex items-center justify-between px-2.5">
-        <Link to="/workspaces" className="text-[15px] font-semibold lowercase tracking-tight">
-          rhoad<span className="text-umber">.</span>
-        </Link>
+        <Link to="/workspaces" className="text-ink"><Logo height={18} /></Link>
         <Link to="/workspaces" title="All workspaces" className="rounded p-0.5 text-faint hover:bg-hover hover:text-ink">
           <I.menu />
         </Link>
@@ -123,7 +122,7 @@ export default function WorkspaceLayout() {
         <button onClick={() => setOpen(true)} className="flex items-center gap-2 text-[13px] font-medium">
           <I.menu /> {ws.name}
         </button>
-        <span className="text-[13px] font-semibold lowercase tracking-tight">rhoad<span className="text-umber">.</span></span>
+        <Logo height={16} />
       </div>
       {open && (
         <div className="fixed inset-0 z-30 flex md:hidden">

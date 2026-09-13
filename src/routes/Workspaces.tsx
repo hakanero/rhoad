@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { Button, Card, Empty, money } from '../components/ui'
 import { I } from '../components/icons'
+import Logo from '../components/Logo'
 import type { Workspace } from '../lib/types'
 
 type Row = Workspace & { invested: number; members: number }
@@ -34,9 +35,7 @@ export default function Workspaces() {
   return (
     <div className="mx-auto max-w-2xl px-8 py-10">
       <header className="mb-8 flex items-center justify-between">
-        <Link to="/" className="text-[15px] font-semibold lowercase tracking-tight">
-          rhoad<span className="text-umber">.</span>
-        </Link>
+        <Link to="/" className="text-ink"><Logo height={18} /></Link>
         <div className="flex items-center gap-4 text-sm">
           <span className="text-muted">{session?.user.email}</span>
           <button onClick={() => supabase.auth.signOut()}

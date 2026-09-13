@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useWorkspace } from '../lib/useWorkspace'
 import { rho } from '../lib/rho'
 import { money } from '../components/ui'
+import Logo from '../components/Logo'
 
 // Mock of Rho's incorporation flow. Full-screen takeover, Rho's register
 // rather than rhoad's: this is the point where the workspace hands off.
@@ -212,9 +213,8 @@ export default function Incorporate() {
 
 function Tag() {
   return (
-    <span className="ml-1 inline-block rounded bg-[#F7F5EF] px-1.5 py-px align-middle text-[10px]
-      font-medium lowercase tracking-tight text-[#7A5C3E]">
-      rhoad
+    <span className="ml-1 inline-flex items-center rounded bg-[#F7F5EF] px-1.5 py-0.5 align-middle text-[#262622]">
+      <Logo height={9} />
     </span>
   )
 }
