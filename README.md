@@ -67,14 +67,16 @@ npm run lint      # oxlint
 
 ## Sample data
 
-[`supabase/seed.sql`](supabase/seed.sql) creates a populated workspace — three weeks of activity, backdated expenses, an upcoming cost, income, a post, replies, and a budget — so every screen has something to show.
+[`supabase/seed.sql`](supabase/seed.sql) creates the rhoad workspace itself — this project's own activity, expenses, upcoming costs, posts, and replies — so every screen has something to show.
 
 1. Sign in to the app once, so your account exists.
-2. Open `seed.sql`, change `owner_email` at the top to the address you signed in with.
+2. Open `seed.sql`, set `owner_email` to the address you signed in with. Optionally set `partner_email` to a second signed-in account to seed a collaborator.
 3. Run it in the SQL editor.
-4. Reload the app; the workspace appears under **Workspaces**.
+4. Reload; the workspace appears under **Workspaces**.
 
 It can be run more than once; each run makes a new workspace.
+
+[`supabase/reset.sql`](supabase/reset.sql) deletes every row and every user account. Schema and buckets stay.
 
 ## Project structure
 
