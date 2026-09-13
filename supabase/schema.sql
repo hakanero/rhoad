@@ -213,3 +213,36 @@ create policy r_insert on replies for insert with check (is_member(workspace_id)
 
 -- Let users set their own display name.
 create policy prof_update on profiles for update using (id = auth.uid());
+
+-- identity ------------------------------------------------------------
+-- The pitch page is structured: `pitch` stays the one-liner (used by
+-- next steps and readiness), `identity` holds the longer sections.
+alter table workspaces add column identity jsonb not null default '{}'::jsonb;
+
+-- Snapshot the whole identity, not just the one-liner.
+create or replace function snapshot_pitch() returns trigger
+language plpgsql as $$
+declare
+  ws workspaces;
+  parts text[] := '{}';
+  k text;
+  labels jsonb := '{
+    "problem": "The problem",
+    "what": "What it does",
+    "who": "Who it is for",
+    "model": "How it makes money",
+    "stage": "Where it is now"
+  }'::jsonb;
+begin
+  select * into ws from workspaces where id = new.workspace_id;
+  if coalesce(ws.pitch, '') <> '' then
+    parts := parts || ws.pitch;
+  end if;
+  for k in select * from jsonb_object_keys(labels) loop
+    if coalesce(ws.identity->>k, '') <> '' then
+      parts := parts || ((labels->>k) || E'\n' || (ws.identity->>k));
+    end if;
+  end loop;
+  new.pitch_snapshot := nullif(array_to_string(parts, E'\n\n'), '');
+  return new;
+end $$;

@@ -4,6 +4,7 @@ import {
   BrowserRouter, Navigate, Route, Routes, useLocation,
 } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/auth'
+import Landing from './routes/Landing'
 import Login from './routes/Login'
 import NewWorkspace from './routes/NewWorkspace'
 import Join from './routes/Join'
@@ -32,6 +33,7 @@ createRoot(document.getElementById('root')!).render(
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/new" element={<RequireAuth><NewWorkspace /></RequireAuth>} />
           <Route path="/join/:slug" element={<RequireAuth><Join /></RequireAuth>} />
@@ -43,7 +45,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="next" element={<NextSteps />} />
             <Route path="incorporate" element={<Incorporate />} />
           </Route>
-          <Route path="*" element={<Navigate replace to="/new" />} />
+          <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

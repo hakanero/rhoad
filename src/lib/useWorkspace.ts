@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
-import type { Entry, Member, Post, Reply, Workspace } from './types'
+import type { Entry, Identity, Member, Post, Reply, Workspace } from './types'
 
 export type WorkspaceData = {
   workspace: Workspace | null
@@ -15,6 +15,7 @@ export type WorkspaceData = {
   error: string | null
   refresh: () => Promise<void>
   setPitchLocal: (pitch: string) => void
+  setIdentityLocal: (identity: Identity) => void
 }
 
 export function useWorkspace(slug: string | undefined): WorkspaceData {
@@ -96,10 +97,14 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
     (pitch: string) => setWorkspace((w) => (w ? { ...w, pitch } : w)),
     [],
   )
+  const setIdentityLocal = useCallback(
+    (identity: Identity) => setWorkspace((w) => (w ? { ...w, identity } : w)),
+    [],
+  )
 
   return {
     workspace, members, entries, posts, replies,
     invested, queued, perMember,
-    loading, error, refresh, setPitchLocal,
+    loading, error, refresh, setPitchLocal, setIdentityLocal,
   }
 }
