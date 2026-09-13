@@ -45,19 +45,19 @@ begin
 
   -- activity ------------------------------------------------------------
   insert into entries (workspace_id, member_id, text, occurred_at, created_at) values
-    (ws_id, me, 'Wrote the spec. Core idea: incorporation-readiness as a byproduct of tracking, never a goal you are sold on.', current_date - 9, now() - interval '9 days'),
-    (ws_id, me, 'Picked the name. rho + road. The road is the product; Rho is where it ends.', current_date - 9, now() - interval '9 days'),
-    (ws_id, me, 'Scaffolded with Vite and Supabase. Schema, RLS, invite-link join, pitch snapshot trigger.', current_date - 8, now() - interval '8 days'),
-    (ws_id, me, 'First version looked like a notes app. Rebuilt as a dashboard: sidebar, stat tiles, spend chart.', current_date - 7, now() - interval '7 days'),
-    (ws_id, me, 'Split money out of the feed. Finances gets its own tab: expenses, income, plan, founders.', current_date - 5, now() - interval '5 days'),
-    (ws_id, me, 'Built the reimbursement flow, then removed it. Anything after incorporation is Rho, not rhoad.', current_date - 3, now() - interval '3 days');
+    (ws_id, me, 'wrote the spec', current_date - 9, now() - interval '9 days'),
+    (ws_id, me, 'going with "rhoad" for the name', current_date - 9, now() - interval '9 days'),
+    (ws_id, me, 'schema + auth + invite links working', current_date - 8, now() - interval '8 days'),
+    (ws_id, me, 'redid the whole UI, it looked like a notes app', current_date - 7, now() - interval '7 days'),
+    (ws_id, me, 'moved expenses out of the home feed into their own tab', current_date - 5, now() - interval '5 days'),
+    (ws_id, me, 'cut the reimbursement flow, out of scope', current_date - 3, now() - interval '3 days');
 
   insert into entries (workspace_id, member_id, text, occurred_at, created_at)
-  values (ws_id, me, 'Demoed to a friend who has spent about $400 on an idea over six months without a record of any of it.', current_date - 2, now() - interval '2 days')
+  values (ws_id, me, 'showed it to Deniz', current_date - 2, now() - interval '2 days')
   returning id into e_demo;
 
   insert into entries (workspace_id, member_id, text, occurred_at, created_at)
-  values (ws_id, me, 'Logo landed. The road runs through the h.', current_date - 1, now() - interval '1 day')
+  values (ws_id, me, 'logo done', current_date - 1, now() - interval '1 day')
   returning id into e_name;
 
   -- expenses ------------------------------------------------------------
@@ -80,13 +80,13 @@ begin
 
   -- content -------------------------------------------------------------
   insert into posts (workspace_id, member_id, platform, caption, created_at) values
-    (ws_id, me, 'x', 'Building rhoad this week: a workspace for the part of a company that happens before it is a company.', now() - interval '6 days'),
-    (ws_id, me, 'linkedin', 'Most founders have spent real money on an idea before they have a legal entity. None of it is written down anywhere. Working on that.', now() - interval '2 days');
+    (ws_id, me, 'x', 'building something for the hackathon this week, will post more when it works', now() - interval '6 days'),
+    (ws_id, me, 'linkedin', 'https://www.linkedin.com/posts/hakanero_rhoad', now() - interval '2 days');
 
   -- replies -------------------------------------------------------------
   insert into replies (workspace_id, member_id, entry_id, text, created_at) values
-    (ws_id, me, e_demo, 'His words: "I would have used this in January."', now() - interval '2 days'),
-    (ws_id, me, e_claude, 'Will need a higher tier if this continues past the hackathon.', now() - interval '6 days');
+    (ws_id, me, e_demo, 'he asked if it does receipts, said yes, he said ok', now() - interval '2 days'),
+    (ws_id, me, e_claude, 'might need the bigger plan', now() - interval '6 days');
 
   -- optional collaborator ----------------------------------------------
   if pid is not null then
@@ -98,14 +98,14 @@ begin
     returning id into them;
 
     insert into entries (workspace_id, member_id, text, occurred_at, created_at) values
-      (ws_id, them, 'Read the spec. Pushed back on the tone; it was too chatty. Fixed.', current_date - 6, now() - interval '6 days'),
-      (ws_id, them, 'Reviewed the Finances tab. Suggested Budget and Projection were one page.', current_date - 3, now() - interval '3 days');
+      (ws_id, them, 'read the spec, some notes in the doc', current_date - 6, now() - interval '6 days'),
+      (ws_id, them, 'went through finances, budget and projection should be one page', current_date - 3, now() - interval '3 days');
 
     insert into entries (workspace_id, member_id, text, category, is_expense, amount, occurred_at, created_at)
     values (ws_id, them, 'Google Workspace', 'software', true, 12.00, current_date - 4, now() - interval '4 days');
 
     insert into replies (workspace_id, member_id, entry_id, text, created_at)
-    values (ws_id, them, e_name, 'It reads as a road at 16px. Ship it.', now() - interval '1 day');
+    values (ws_id, them, e_name, 'nice', now() - interval '1 day');
   end if;
 
   raise notice 'Seeded workspace % (%)', ws_id, owner_email;
