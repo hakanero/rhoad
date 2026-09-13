@@ -42,7 +42,7 @@ export default function Landing() {
           </h1>
           <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted">
             Record activity, expenses, and public communication for an early-stage
-            company in a private, invite-only workspace. When the company is ready to
+            company in a private workspace. When the company is ready to
             incorporate, the required information is already on record.
           </p>
           {session && (

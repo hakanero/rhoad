@@ -2,7 +2,7 @@
 
 road from idea to company
 
-A private, invite-only workspace for an early-stage company before it is incorporated. Founders log activity, expenses with receipts, income, and public posts; the workspace keeps running totals per person, an expected-cost projection, and a budget with runway. When the company is ready, one screen hands the workspace's data to Rho's incorporation flow. rhoad ends at that handoff.
+A private workspace for an early-stage company before it is incorporated. Founders log activity, expenses with receipts, income, and public posts; the workspace keeps running totals per person, an expected-cost projection, and a budget with runway. When the company is ready, one screen hands the workspace's data to Rho's incorporation flow. rhoad ends at that handoff.
 
 ## Stack
 
@@ -76,23 +76,6 @@ npm run lint      # oxlint
 
 It can be run more than once; each run makes a new workspace.
 
-## Walkthrough
-
-A short tour of what the product does, in the order a demo would take:
-
-1. **Workspaces** lists every company you belong to. Create one with just a name.
-2. **Home** — the activity feed. Log a plain entry. Stat tiles, an 8-week spend chart, per-person contributions, and previews of the pitch and content sit alongside.
-3. **Finances → Expenses** — log an expense with a date, category, amount, and receipt. Mark it as an upcoming cost if it is a trial that will start charging. Export the ledger as CSV.
-4. **Finances → Income** — money received, kept separate from money spent.
-5. **Finances → Plan** — set a budget; see committed monthly spend, runway, and when costs step up.
-6. **Finances → Founders** — each founder's share of spend against the equity split they intend.
-7. **Pitch** — the business purpose, plus a short profile. Every post records both as they stood when it was logged.
-8. **Content** — public posts, with the pitch snapshot behind each.
-9. **Next steps** — what is on record, stated plainly. The **Incorporate with Rho** action is visible from the start and enabled once a name and business purpose exist.
-10. **Incorporate** — a full-screen mock of Rho's flow. Fields the workspace can supply are prefilled and tagged `rhoad`; the rest are shown as Rho would ask for them. Submitting is simulated.
-
-To see two people in one workspace: copy the invite link from the sidebar (`+` next to People), open it in a private window, sign in with a second email, and log an entry. It appears in the first window without a reload, in a different color.
-
 ## Project structure
 
 ```
@@ -114,15 +97,6 @@ supabase/
   schema.sql          ordered migration
   seed.sql            sample data
 ```
-
-## Design notes
-
-- **Attribution is bound to identity.** Every entry, post, and reply carries the member who made it; members come from real accounts joined through invite links.
-- **Snapshots happen in the database.** A trigger copies the pitch into each post at insert time, so a stale tab cannot record the wrong text.
-- **Totals are views.** `workspace_totals` and `member_totals` are computed in SQL, not summed client-side.
-- **Money in and money out are never netted.** Income has its own total.
-- **No pressure.** Nothing counts down or nags. Next steps reports facts; the incorporation action explains what it needs and waits.
-- **rhoad stops at the handoff.** Anything after filing — EIN, banking, reimbursement — is Rho's product, not this one.
 
 ## Deploying
 
