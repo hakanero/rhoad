@@ -2,14 +2,13 @@
 
 road from idea to company
 
-A private workspace for an early-stage company before it is incorporated. Founders log activity, expenses with receipts, income, and public posts; the workspace keeps running totals per person, an expected-cost projection, and a budget with runway. When the company is ready, one screen hands the workspace's data to Rho's incorporation flow. rhoad ends at that handoff.
+A private workspace for an early-stage company before it is incorporated. Founders log activity, expenses with receipts, income, and public posts; the workspace keeps running totals per person, an expected-cost projection, and a budget with runway. When the company is ready, one screen hands the workspace's data to Rho's incorporation flow.
 
 ## Stack
 
 - **Vite + React 19 + TypeScript**, Tailwind v4
 - **Supabase**: Postgres, Auth (magic link), Storage (receipts), Realtime
-- No backend of its own. The browser talks to Supabase directly; row-level security scopes every workspace to its members.
-- Rho integration is a mock behind an interface (`src/lib/rho.ts`).
+- Rho integration is mock
 
 ## Setup
 
@@ -46,8 +45,6 @@ VITE_SUPABASE_URL=https://<ref>.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 ```
 
-Never the secret key: `VITE_*` values are inlined into the browser bundle. The app refuses to start if it detects one.
-
 ## Running
 
 ```bash
@@ -76,7 +73,7 @@ npm run lint      # oxlint
 
 It can be run more than once; each run makes a new workspace.
 
-[`supabase/reset.sql`](supabase/reset.sql) deletes every row and every user account. Schema and buckets stay.
+[`supabase/reset.sql`](supabase/reset.sql) deletes every row and every user account except schema and buckets.
 
 ## Project structure
 
