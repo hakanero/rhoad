@@ -241,3 +241,17 @@ begin
   return new;
 end
 $$;
+
+-- Display name via RPC: upserts the caller's profile row, so it works
+-- whether or not the row exists and independent of table policies.
+create or replace function set_display_name(display_name text) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then
+    raise exception 'not authenticated';
+  end if;
+  insert into profiles (id, name, email)
+  values (auth.uid(), display_name, (select email from auth.users where id = auth.uid()))
+  on conflict (id) do update set name = excluded.name;
+end
+$$;

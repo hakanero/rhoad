@@ -129,14 +129,17 @@ export default function WorkspaceLayout() {
 
 // Magic-link accounts have no name. Ask once; it's what the feed
 // attributes entries to.
-function NamePrompt({ userId, onDone }: { userId: string; onDone: () => void }) {
+function NamePrompt({ onDone }: { userId: string; onDone: () => void }) {
   const [name, setName] = useState('')
   const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
   async function save(e: React.FormEvent) {
     e.preventDefault()
     setBusy(true)
-    await supabase.from('profiles').update({ name: name.trim() }).eq('id', userId)
+    setErr(null)
+    const { error } = await supabase.rpc('set_display_name', { display_name: name.trim() })
     setBusy(false)
+    if (error) return setErr(error.message)
     onDone()
   }
   return (
@@ -151,7 +154,10 @@ function NamePrompt({ userId, onDone }: { userId: string; onDone: () => void }) 
           onChange={(e) => setName(e.target.value)}
           className="max-w-xs"
         />
-        <Button type="submit" size="sm" disabled={busy || !name.trim()}>Save</Button>
+        <Button type="submit" size="sm" disabled={busy || !name.trim()}>
+          {busy ? 'Saving…' : 'Save'}
+        </Button>
+        {err && <span className="text-sm text-berry">{err}</span>}
       </form>
     </Card>
   )
