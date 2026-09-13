@@ -45,19 +45,19 @@ begin
 
   -- activity ------------------------------------------------------------
   insert into entries (workspace_id, member_id, text, occurred_at, created_at) values
-    (ws_id, me, 'wrote the spec', current_date - 9, now() - interval '9 days'),
-    (ws_id, me, 'going with "rhoad" for the name', current_date - 9, now() - interval '9 days'),
-    (ws_id, me, 'schema + auth + invite links working', current_date - 8, now() - interval '8 days'),
-    (ws_id, me, 'redid the whole UI, it looked like a notes app', current_date - 7, now() - interval '7 days'),
-    (ws_id, me, 'moved expenses out of the home feed into their own tab', current_date - 5, now() - interval '5 days'),
-    (ws_id, me, 'cut the reimbursement flow, out of scope', current_date - 3, now() - interval '3 days');
+    (ws_id, me, 'Wrote the spec', current_date - 9, now() - interval '9 days'),
+    (ws_id, me, 'Going with "rhoad" for the name', current_date - 9, now() - interval '9 days'),
+    (ws_id, me, 'Schema, auth and invite links working', current_date - 8, now() - interval '8 days'),
+    (ws_id, me, 'Redid the whole UI, it looked like a notes app', current_date - 7, now() - interval '7 days'),
+    (ws_id, me, 'Moved expenses out of the home feed into their own tab', current_date - 5, now() - interval '5 days'),
+    (ws_id, me, 'Cut the reimbursement flow, out of scope', current_date - 3, now() - interval '3 days');
 
   insert into entries (workspace_id, member_id, text, occurred_at, created_at)
-  values (ws_id, me, 'showed it to Deniz', current_date - 2, now() - interval '2 days')
+  values (ws_id, me, 'Showed it to Deniz', current_date - 2, now() - interval '2 days')
   returning id into e_demo;
 
   insert into entries (workspace_id, member_id, text, occurred_at, created_at)
-  values (ws_id, me, 'logo done', current_date - 1, now() - interval '1 day')
+  values (ws_id, me, 'Logo done', current_date - 1, now() - interval '1 day')
   returning id into e_name;
 
   -- expenses ------------------------------------------------------------
@@ -80,13 +80,13 @@ begin
 
   -- content -------------------------------------------------------------
   insert into posts (workspace_id, member_id, platform, caption, created_at) values
-    (ws_id, me, 'x', 'building something for the hackathon this week, will post more when it works', now() - interval '6 days'),
+    (ws_id, me, 'x', 'Building something for the hackathon this week, will post more when it works', now() - interval '6 days'),
     (ws_id, me, 'linkedin', 'https://www.linkedin.com/posts/hakanero_rhoad', now() - interval '2 days');
 
   -- replies -------------------------------------------------------------
   insert into replies (workspace_id, member_id, entry_id, text, created_at) values
-    (ws_id, me, e_demo, 'he asked if it does receipts, said yes, he said ok', now() - interval '2 days'),
-    (ws_id, me, e_claude, 'might need the bigger plan', now() - interval '6 days');
+    (ws_id, me, e_demo, 'He asked if it does receipts. It does.', now() - interval '2 days'),
+    (ws_id, me, e_claude, 'Might need the bigger plan', now() - interval '6 days');
 
   -- optional collaborator ----------------------------------------------
   if pid is not null then
@@ -98,14 +98,14 @@ begin
     returning id into them;
 
     insert into entries (workspace_id, member_id, text, occurred_at, created_at) values
-      (ws_id, them, 'read the spec, some notes in the doc', current_date - 6, now() - interval '6 days'),
-      (ws_id, them, 'went through finances, budget and projection should be one page', current_date - 3, now() - interval '3 days');
+      (ws_id, them, 'Read the spec, left some notes in the doc', current_date - 6, now() - interval '6 days'),
+      (ws_id, them, 'Went through Finances. Budget and Projection should be one page.', current_date - 3, now() - interval '3 days');
 
     insert into entries (workspace_id, member_id, text, category, is_expense, amount, occurred_at, created_at)
     values (ws_id, them, 'Google Workspace', 'software', true, 12.00, current_date - 4, now() - interval '4 days');
 
     insert into replies (workspace_id, member_id, entry_id, text, created_at)
-    values (ws_id, them, e_name, 'nice', now() - interval '1 day');
+    values (ws_id, them, e_name, 'Nice', now() - interval '1 day');
   end if;
 
   raise notice 'Seeded workspace % (%)', ws_id, owner_email;
