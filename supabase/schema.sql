@@ -179,3 +179,14 @@ create policy p_read   on posts   for select using (is_member(workspace_id));
 create policy p_insert on posts   for insert with check (is_member(workspace_id));
 
 create policy prof_read on profiles for select using (true);
+
+-- storage -------------------------------------------------------------
+-- A public bucket grants public reads, but uploads still pass through
+-- RLS on storage.objects. Without this, the composer's receipt upload
+-- fails for signed-in users.
+create policy receipts_insert on storage.objects
+for insert to authenticated
+with check (bucket_id = 'receipts');
+
+create policy receipts_read on storage.objects
+for select using (bucket_id = 'receipts');

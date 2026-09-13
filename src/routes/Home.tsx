@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { useWs } from '../lib/ctx'
 import Composer from '../components/Composer'
+import PostComposer from '../components/PostComposer'
 import { Dot, money } from '../components/ui'
 import type { Entry, Member, Post } from '../lib/types'
 
@@ -9,6 +11,7 @@ type FeedItem =
 
 export default function Home() {
   const ws = useWs()
+  const [mode, setMode] = useState<'entry' | 'post'>('entry')
   const byId = new Map(ws.members.map((m) => [m.id, m]))
 
   const feed: FeedItem[] = [
@@ -19,7 +22,25 @@ export default function Home() {
   return (
     <>
       <Totals />
-      <Composer workspaceId={ws.workspace!.id} me={ws.me} onDone={ws.refresh} />
+
+      {mode === 'entry' ? (
+        <>
+          <Composer workspaceId={ws.workspace!.id} me={ws.me} onDone={ws.refresh} />
+          <button
+            onClick={() => setMode('post')}
+            className="mb-8 -mt-4 block text-xs text-muted hover:text-ink"
+          >
+            or log a post about it
+          </button>
+        </>
+      ) : (
+        <PostComposer
+          workspaceId={ws.workspace!.id}
+          me={ws.me}
+          onDone={() => { setMode('entry'); ws.refresh() }}
+          onCancel={() => setMode('entry')}
+        />
+      )}
 
       {feed.length === 0 && (
         <p className="text-sm text-muted">Nothing logged yet.</p>
