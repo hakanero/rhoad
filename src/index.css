@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens. Everything visual funnels through here — restyling
+   the app should mean editing this block, not hunting components.
+   --------------------------------------------------------------- */
+@theme {
+  --color-cream: #F7F5EF;
+  --color-ink: #262622;
+  --color-umber: #7A5C3E;
+
+  /* collaborator attribution — deliberately distinct from umber */
+  --color-dusk: #454467;
+  --color-slate: #3E6E8E;
+  --color-plum: #6B5B95;
+  --color-berry: #9C4F63;
+
+  --color-muted: #8A857A;
+  --color-line: #E4E0D6;
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
