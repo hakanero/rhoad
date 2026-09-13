@@ -32,7 +32,6 @@ export default function NextSteps() {
     <>
       <PageHeader
         title="Next steps"
-        sub="Information on record and available actions."
       />
       <div className="grid max-w-3xl grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_320px]">
       <Card className="divide-y divide-line self-start">
@@ -55,9 +54,6 @@ export default function NextSteps() {
         {(
           <>
             <p className="text-sm font-medium">Incorporate</p>
-            <p className="mt-1 text-sm text-muted">
-              Rho can incorporate this company using the information in this workspace.
-            </p>
             <p className="mt-1 text-sm text-muted">
               {ready
                 ? 'Name, business purpose, and founders will be transferred.'

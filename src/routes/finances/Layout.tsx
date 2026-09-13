@@ -20,7 +20,6 @@ export default function FinancesLayout() {
     <>
       <PageHeader
         title="Finances"
-        sub="Money paid, money received, and what is expected."
       />
       <nav className="mb-6 flex gap-5 border-b border-line">
         {TABS.map((t) => (

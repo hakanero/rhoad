@@ -12,7 +12,6 @@ export default function Login() {
       <Link to="/" className="mb-1 text-2xl tracking-tight lowercase">
         rhoad<span className="text-umber">.</span>
       </Link>
-      <p className="mb-6 text-sm text-muted">Sign in or create an account.</p>
       <Card className="p-5">
         <AuthForm next={next} />
       </Card>

@@ -50,9 +50,6 @@ export default function AuthForm({ next = '/workspaces' }: { next?: string }) {
       <Button type="submit" disabled={busy}>
         {busy ? 'Sending…' : 'Continue with email'}
       </Button>
-      <p className="text-[11px] text-faint">
-        A sign-in link is sent by email. New accounts are created on first sign-in.
-      </p>
       {err && <p className="text-sm text-berry">{err}</p>}
     </form>
   )

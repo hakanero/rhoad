@@ -47,7 +47,6 @@ export default function Workspaces() {
       <div className="mb-4 flex items-end justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Workspaces</h1>
-          <p className="mt-1 text-sm text-muted">Companies you are a member of.</p>
         </div>
         <Link to="/new"><Button size="sm">New workspace</Button></Link>
       </div>
@@ -57,7 +56,7 @@ export default function Workspaces() {
           <p className="px-4 py-6 text-sm text-muted">Loading…</p>
         ) : rows.length === 0 ? (
           <Empty icon={<I.home />} title="No workspaces"
-            sub="Create a workspace, or open an invite link to join one." />
+          />
         ) : (
           <ul className="divide-y divide-line">
             {rows.map((w) => (

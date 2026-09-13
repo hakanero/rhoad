@@ -26,9 +26,6 @@ export default function NewWorkspace() {
         ← Workspaces
       </Link>
       <h1 className="mb-1 text-lg tracking-tight">New workspace</h1>
-      <p className="mb-6 text-sm text-muted">
-        The name can be changed later.
-      </p>
       <Card className="p-5">
       <form onSubmit={create} className="space-y-3">
         <div>

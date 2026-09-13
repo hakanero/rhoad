@@ -27,7 +27,6 @@ export default function Founders() {
       <Card>
         <CardHeader
           title="Contribution and intended split"
-          sub="Share of funds each founder has paid, against the equity split they intend. Informational."
         />
         <div className="divide-y divide-line">
           {rows.map((r) => <SplitRow key={r.member.id} r={r} onSaved={ws.refresh} />)}

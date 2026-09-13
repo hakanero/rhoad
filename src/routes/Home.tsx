@@ -40,7 +40,6 @@ export default function Home() {
               <Empty
                 icon={<I.clock />}
                 title="No activity yet"
-                sub="Logged entries appear here, newest first."
               />
             ) : (
               <div className="divide-y divide-line">
@@ -83,11 +82,11 @@ function Stats() {
     },
     {
       label: 'Received', value: money(ws.received),
-      sub: ws.received > 0 ? 'Kept separate from invested' : 'No income recorded',
+      sub: '',
     },
     {
       label: 'People', value: String(ws.members.length),
-      sub: ws.members.length === 1 ? 'Sole member' : 'Members',
+      sub: '',
     },
   ]
 
@@ -100,7 +99,7 @@ function Stats() {
             t.accent ? 'text-umber' : ''}`}>
             {t.value}
           </p>
-          <p className="mt-1 text-xs text-faint">{t.sub}</p>
+          {t.sub && <p className="mt-1 text-xs text-faint">{t.sub}</p>}
         </Card>
       ))}
     </div>
@@ -126,7 +125,7 @@ function SpendChart() {
 
   return (
     <Card>
-      <CardHeader title="Spend" sub="Last 8 weeks" />
+      <CardHeader title="Spend" sub="8 weeks" />
       <div className="px-4 pt-4 pb-3">
         <div className="flex h-20 items-end gap-1.5">
           {weeks.map((w, i) => (
@@ -157,7 +156,7 @@ function Contributions() {
   const max = Math.max(...Object.values(ws.perMember).map((l) => l.invested), 1)
   return (
     <Card>
-      <CardHeader title="Contributions" sub="Per person" />
+      <CardHeader title="Contributions" />
       <ul className="divide-y divide-line">
         {ws.members.map((m) => {
           const v = ws.perMember[m.id]?.invested ?? 0
@@ -200,7 +199,7 @@ function PitchCard() {
         {pitch ? (
           <p className="line-clamp-3 text-[13px] leading-relaxed">{pitch}</p>
         ) : (
-          <p className="text-xs text-faint">Not written yet.</p>
+          <p className="text-xs text-faint">—</p>
         )}
       </div>
     </Card>
@@ -224,7 +223,7 @@ function RecentContent() {
         }
       />
       {recent.length === 0 ? (
-        <p className="px-4 py-3 text-xs text-faint">Nothing published yet.</p>
+        <p className="px-4 py-3 text-xs text-faint">—</p>
       ) : (
         <ul className="divide-y divide-line">
           {recent.map((p) => (

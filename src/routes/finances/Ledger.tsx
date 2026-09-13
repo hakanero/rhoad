@@ -60,7 +60,7 @@ export default function Ledger() {
           }
         />
         {rows.length === 0 ? (
-          <Empty icon={<I.receipt />} title="No expenses" sub="Payments and expected costs appear here." />
+          <Empty icon={<I.receipt />} title="No expenses" />
         ) : (
           <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-[13px]">

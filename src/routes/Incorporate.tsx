@@ -91,9 +91,6 @@ export default function Incorporate() {
                 </button>
               </li>
             ))}
-            <li className="hidden px-3 pt-6 text-[11px] leading-relaxed text-black/40 md:block">
-              Fields marked <Tag /> were supplied by your rhoad workspace.
-            </li>
           </ol>
 
           {/* content */}

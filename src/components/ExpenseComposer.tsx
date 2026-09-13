@@ -116,9 +116,6 @@ export default function ExpenseComposer({
             disabled={busy || !me || !text.trim() || (amount === '' && !upcoming)}>
             {busy ? 'Saving…' : 'Add expense'}
           </Button>
-          {amount === '' && !upcoming && (
-            <span className="text-[11px] text-faint">An amount or an upcoming cost is required.</span>
-          )}
           {err && <span className="text-sm text-berry">{err}</span>}
         </div>
       </form>

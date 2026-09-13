@@ -4,13 +4,10 @@ import { supabase } from '../lib/supabase'
 import { Card, CardHeader, PageHeader } from '../components/ui'
 import type { Identity, IdentityKey } from '../lib/types'
 
-const SECTIONS: { key: IdentityKey; title: string; hint: string; rows: number }[] = [
-  { key: 'problem', title: 'The problem', rows: 4,
-    hint: 'The problem being addressed, and who has it.' },
-  { key: 'what', title: 'What it does', rows: 5,
-    hint: 'The product or service, described concretely.' },
-  { key: 'who', title: 'Who it is for', rows: 3,
-    hint: 'The initial customer segment.' },
+const SECTIONS: { key: IdentityKey; title: string; rows: number }[] = [
+  { key: 'problem', title: 'The problem', rows: 4 },
+  { key: 'what', title: 'What it does', rows: 5 },
+  { key: 'who', title: 'Who it is for', rows: 3 },
 ]
 
 export default function Pitch() {
@@ -43,7 +40,6 @@ export default function Pitch() {
     <>
       <PageHeader
         title="Pitch"
-        sub="The business purpose, and the profile behind it. Sections are optional."
         action={
           <span className="text-xs text-muted tabular-nums">
             {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' : ''}
@@ -56,7 +52,6 @@ export default function Pitch() {
           <Card>
             <CardHeader
               title="Business purpose"
-              sub="One or two sentences. This is the description used on incorporation."
             />
             <textarea
               rows={2}
@@ -75,7 +70,7 @@ export default function Pitch() {
 
           {SECTIONS.map((s) => (
             <Card key={s.key}>
-              <CardHeader title={s.title} sub={s.hint} />
+              <CardHeader title={s.title} />
               <textarea
                 rows={s.rows}
                 value={identity[s.key] ?? ''}

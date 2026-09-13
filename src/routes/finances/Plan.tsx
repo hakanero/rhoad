@@ -67,7 +67,7 @@ export default function Plan() {
       <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-5">
           <Card>
-            <CardHeader title="Budget" sub="Set aside by the founders; shared across the workspace" />
+            <CardHeader title="Budget" />
             <div className="p-4">
               <div className="flex items-end gap-3">
                 <div className="w-44">
@@ -95,10 +95,10 @@ export default function Plan() {
           </Card>
 
           <Card>
-            <CardHeader title="Committed spend" sub="Next 12 months, from upcoming costs and their start dates" />
+            <CardHeader title="Committed spend" sub="12 months" />
             {upcoming.length === 0 ? (
               <Empty icon={<I.clock />} title="No upcoming costs"
-                sub="Mark an expense as an upcoming cost to project it here." />
+              />
             ) : (
               <div className="px-4 pt-6 pb-4">
                 <div className="flex h-32 items-end gap-2">
@@ -149,10 +149,10 @@ export default function Plan() {
 
         <div className="space-y-5">
           <Card>
-            <CardHeader title="Step-ups" sub="When committed spend increases" />
+            <CardHeader title="Step-ups" />
             {stepUps.length === 0 ? (
               <p className="px-4 py-3 text-xs text-faint">
-                {upcoming.length === 0 ? 'No upcoming costs.' : 'No increases in the next 12 months.'}
+                —
               </p>
             ) : (
               <ul className="divide-y divide-line">
@@ -168,7 +168,7 @@ export default function Plan() {
           <Card>
             <CardHeader title="Upcoming costs" sub={`${upcoming.length} tracked`} />
             {upcoming.length === 0 ? (
-              <p className="px-4 py-3 text-xs text-faint">None tracked.</p>
+              <p className="px-4 py-3 text-xs text-faint">—</p>
             ) : (
               <ul className="divide-y divide-line">
                 {upcoming.map((e) => (

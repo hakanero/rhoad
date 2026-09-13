@@ -58,15 +58,14 @@ export default function Landing() {
         <Card id="signin" className="self-start p-5">
           {session ? (
             <>
-              <p className="text-sm font-medium">Signed in</p>
-              <p className="mt-0.5 text-xs text-muted">{session.user.email}</p>
+              <p className="text-sm font-medium">{session.user.email}</p>
               <div className="mt-4">
                 <Link to="/workspaces"><Button size="sm">Open workspaces</Button></Link>
               </div>
             </>
           ) : (
             <>
-              <p className="mb-4 text-sm font-medium">Sign in or create an account</p>
+              <p className="mb-4 text-sm font-medium">Sign in</p>
               <AuthForm />
             </>
           )}

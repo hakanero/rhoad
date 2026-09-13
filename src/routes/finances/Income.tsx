@@ -31,7 +31,7 @@ export default function Income() {
         <CardHeader title="Payments received" sub={`${rows.length} ${rows.length === 1 ? 'item' : 'items'}`} />
         {rows.length === 0 ? (
           <Empty icon={<I.receipt />} title="No income recorded"
-            sub="Money the company has received appears here." />
+          />
         ) : (
           <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] text-[13px]">
