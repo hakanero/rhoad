@@ -35,8 +35,11 @@ export default function Landing() {
 
       <section className="mx-auto grid max-w-5xl grid-cols-[1.3fr_1fr] gap-16 px-8 pt-16 pb-16">
         <div>
-          <p className="text-sm text-umber">road from idea to company</p>
-          <h1 className="mt-3 text-[44px] leading-[1.08] font-semibold tracking-tight">
+          <p className="text-[64px] leading-none font-semibold lowercase tracking-tighter">
+            rhoad<span className="text-umber">.</span>
+          </p>
+          <p className="mt-3 text-[15px] text-umber">road from idea to company</p>
+          <h1 className="mt-8 text-[34px] leading-[1.12] font-semibold tracking-tight">
             The workspace for a company before incorporation.
           </h1>
           <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted">
