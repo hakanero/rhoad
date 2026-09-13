@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { Button, Card } from '../components/ui'
 import { I } from '../components/icons'
+import AuthForm from '../components/AuthForm'
 
 const FEATURES = [
   { icon: I.home, title: 'Activity log',
@@ -16,7 +17,6 @@ const FEATURES = [
 
 export default function Landing() {
   const { session } = useAuth()
-  const cta = session ? '/new' : '/login'
 
   return (
     <div className="min-h-full">
@@ -26,27 +26,48 @@ export default function Landing() {
         </span>
         <nav className="flex items-center gap-4 text-sm">
           {session ? (
-            <Link to="/new"><Button size="sm">Open workspace</Button></Link>
+            <Link to="/workspaces"><Button size="sm">Your workspaces</Button></Link>
           ) : (
-            <Link to="/login" className="text-muted hover:text-ink">Sign in</Link>
+            <a href="#signin" className="text-muted hover:text-ink">Sign in</a>
           )}
         </nav>
       </header>
 
-      <section className="mx-auto max-w-5xl px-8 pt-20 pb-16">
-        <p className="text-sm text-umber">road from idea to company</p>
-        <h1 className="mt-3 max-w-2xl text-[44px] leading-[1.08] font-semibold tracking-tight">
-          The workspace for a company before incorporation.
-        </h1>
-        <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted">
-          Record activity, expenses, and public communication for an early-stage
-          company in a private, invite-only workspace. When the company is ready to
-          incorporate, the required information is already on record.
-        </p>
-        <div className="mt-8 flex items-center gap-4">
-          <Link to={cta}><Button>Create a workspace</Button></Link>
-          <span className="text-sm text-faint">Invite-only. Private by default.</span>
+      <section className="mx-auto grid max-w-5xl grid-cols-[1.3fr_1fr] gap-16 px-8 pt-16 pb-16">
+        <div>
+          <p className="text-sm text-umber">road from idea to company</p>
+          <h1 className="mt-3 text-[44px] leading-[1.08] font-semibold tracking-tight">
+            The workspace for a company before incorporation.
+          </h1>
+          <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted">
+            Record activity, expenses, and public communication for an early-stage
+            company in a private, invite-only workspace. When the company is ready to
+            incorporate, the required information is already on record.
+          </p>
+          {session && (
+            <div className="mt-8 flex items-center gap-4">
+              <Link to="/workspaces"><Button>Your workspaces</Button></Link>
+              <Link to="/new" className="text-sm text-muted hover:text-ink">New workspace</Link>
+            </div>
+          )}
         </div>
+
+        <Card id="signin" className="self-start p-5">
+          {session ? (
+            <>
+              <p className="text-sm font-medium">Signed in</p>
+              <p className="mt-0.5 text-xs text-muted">{session.user.email}</p>
+              <div className="mt-4">
+                <Link to="/workspaces"><Button size="sm">Open workspaces</Button></Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="mb-4 text-sm font-medium">Sign in or create an account</p>
+              <AuthForm />
+            </>
+          )}
+        </Card>
       </section>
 
       <section className="mx-auto max-w-5xl px-8 pb-20">

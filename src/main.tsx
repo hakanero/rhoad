@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from './lib/auth'
 import Landing from './routes/Landing'
 import Login from './routes/Login'
 import NewWorkspace from './routes/NewWorkspace'
+import Workspaces from './routes/Workspaces'
 import Join from './routes/Join'
 import WorkspaceLayout from './routes/WorkspaceLayout'
 import Home from './routes/Home'
@@ -35,6 +36,7 @@ createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/workspaces" element={<RequireAuth><Workspaces /></RequireAuth>} />
           <Route path="/new" element={<RequireAuth><NewWorkspace /></RequireAuth>} />
           <Route path="/join/:slug" element={<RequireAuth><Join /></RequireAuth>} />
           <Route path="/w/:slug" element={<RequireAuth><WorkspaceLayout /></RequireAuth>}>

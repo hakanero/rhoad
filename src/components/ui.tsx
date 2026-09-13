@@ -42,10 +42,10 @@ export function Label({ children }: { children: React.ReactNode }) {
 }
 
 export function Card({
-  children, className = '',
-}: { children: React.ReactNode; className?: string }) {
+  children, className = '', id,
+}: { children: React.ReactNode; className?: string; id?: string }) {
   return (
-    <div className={`rounded-xl bg-surface shadow-card ${className}`}>
+    <div id={id} className={`rounded-xl bg-surface shadow-card ${className}`}>
       {children}
     </div>
   )

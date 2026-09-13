@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { Button, Card, Input, Label } from '../components/ui'
 import type { Workspace } from '../lib/types'
@@ -22,6 +22,9 @@ export default function NewWorkspace() {
 
   return (
     <div className="mx-auto flex min-h-full max-w-sm flex-col justify-center px-6">
+      <Link to="/workspaces" className="mb-6 text-xs text-muted hover:text-ink">
+        ← Workspaces
+      </Link>
       <h1 className="mb-1 text-lg tracking-tight">New workspace</h1>
       <p className="mb-6 text-sm text-muted">
         The name can be changed later.

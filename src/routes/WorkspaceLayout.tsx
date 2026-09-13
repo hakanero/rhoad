@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Outlet, useParams } from 'react-router-dom'
+import { Link, NavLink, Outlet, useParams } from 'react-router-dom'
 import { useWorkspace } from '../lib/useWorkspace'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
@@ -52,9 +52,13 @@ export default function WorkspaceLayout() {
       <aside className="sticky top-0 flex h-screen w-[232px] shrink-0 flex-col
         border-r border-line bg-cream px-3 py-4">
         <div className="flex items-center justify-between px-2.5">
-          <span className="text-[15px] font-semibold lowercase tracking-tight">
+          <Link to="/workspaces" className="text-[15px] font-semibold lowercase tracking-tight">
             rhoad<span className="text-umber">.</span>
-          </span>
+          </Link>
+          <Link to="/workspaces" title="All workspaces"
+            className="rounded p-0.5 text-faint hover:bg-hover hover:text-ink">
+            <I.ledger />
+          </Link>
         </div>
 
         <div className="mt-6 rounded-lg bg-surface px-3 py-2.5 shadow-card">
