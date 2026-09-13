@@ -71,11 +71,11 @@ function Stats() {
   const tiles = [
     {
       label: 'Total invested', value: money(ws.invested), accent: true,
-      sub: last ? `Last ${relDate(last.created_at).toLowerCase()}` : 'Nothing logged',
+      sub: last ? `Last expense ${relDate(last.created_at).toLowerCase()}` : 'Nothing logged',
     },
     {
-      label: 'Queued', value: money(ws.queued),
-      sub: `${freeTiers.length} free ${freeTiers.length === 1 ? 'tier' : 'tiers'} tracked`,
+      label: 'Upcoming', value: money(ws.queued),
+      sub: `${freeTiers.length} expected ${freeTiers.length === 1 ? 'cost' : 'costs'}`,
     },
     {
       label: 'Expenses', value: String(expenses.length),
@@ -126,7 +126,7 @@ function SpendChart() {
       <div className="px-4 pt-4 pb-3">
         <div className="flex h-20 items-end gap-1.5">
           {weeks.map((w, i) => (
-            <div key={i} className="group relative flex flex-1 flex-col justify-end">
+            <div key={i} className="group relative flex h-full flex-1 flex-col justify-end">
               <div
                 className={`rounded-sm ${w.sum > 0 ? 'bg-umber' : 'bg-sunken'}`}
                 style={{ height: `${Math.max((w.sum / max) * 100, 6)}%` }}
@@ -265,11 +265,12 @@ function EntryRow({ e, byId }: { e: Entry; byId: Map<string, Member> }) {
 
           {(e.is_free_tier || e.receipt_url) && (
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              {e.is_free_tier && <Badge>Free tier</Badge>}
-              {e.is_free_tier && e.expected_cost != null && (
-                <Badge>{money(Number(e.expected_cost))} expected</Badge>
+              {e.is_free_tier && (
+                <Badge>
+                  Upcoming{e.expected_cost != null && ` · ${money(Number(e.expected_cost))}`}
+                  {e.converts_at && ` from ${e.converts_at}`}
+                </Badge>
               )}
-              {e.is_free_tier && e.converts_at && <Badge>Converts {e.converts_at}</Badge>}
               {e.receipt_url && (
                 <a href={e.receipt_url} target="_blank" rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-md bg-sunken px-1.5 py-0.5

@@ -13,6 +13,7 @@ export const I = {
   next: () => wrap(<><path d="M3 8h9"/><path d="M8.5 4.5 12 8l-3.5 3.5"/></>),
   plus: () => wrap(<path d="M8 3.5v9M3.5 8h9"/>),
   receipt: () => wrap(<><path d="M4 2.5h8v11l-2-1-2 1-2-1-2 1z"/><path d="M6 6h4M6 8.5h4"/></>),
+  ledger: () => wrap(<><path d="M2.5 4h11M2.5 8h11M2.5 12h7"/></>),
   people: () => wrap(<><circle cx="6" cy="5.5" r="2.25"/><path d="M2.5 13c0-2 1.6-3.5 3.5-3.5s3.5 1.5 3.5 3.5"/><circle cx="11" cy="6" r="1.75"/><path d="M10.5 9.5c1.7 0 3 1.4 3 3.2"/></>),
   link: () => wrap(<><path d="M6.5 9.5 9.5 6.5"/><path d="M7 4.5 8.2 3.3a2.3 2.3 0 0 1 3.3 3.3L10.3 7.8"/><path d="M9 11.5 7.8 12.7a2.3 2.3 0 0 1-3.3-3.3L5.7 8.2"/></>),
   check: () => wrap(<path d="M3.5 8.5 6.5 11.5 12.5 4.5"/>),

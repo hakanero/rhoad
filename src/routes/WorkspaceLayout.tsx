@@ -8,6 +8,7 @@ import { I } from '../components/icons'
 
 const NAV = [
   { to: '', label: 'Home', icon: I.home, end: true },
+  { to: 'expenses', label: 'Expenses', icon: I.ledger, end: false },
   { to: 'pitch', label: 'Pitch', icon: I.pitch, end: false },
   { to: 'content', label: 'Content', icon: I.content, end: false },
   { to: 'next', label: 'Next steps', icon: I.next, end: false },
