@@ -190,3 +190,26 @@ with check (bucket_id = 'receipts');
 
 create policy receipts_read on storage.objects
 for select using (bucket_id = 'receipts');
+
+-- replies -------------------------------------------------------------
+-- Flat, no nesting. Targets an entry or a post; exactly one of the two.
+create table replies (
+  id uuid primary key default gen_random_uuid(),
+  workspace_id uuid not null references workspaces(id) on delete cascade,
+  member_id uuid not null references members(id) on delete cascade,
+  entry_id uuid references entries(id) on delete cascade,
+  post_id uuid references posts(id) on delete cascade,
+  text text not null,
+  created_at timestamptz not null default now(),
+  constraint one_target check (num_nonnulls(entry_id, post_id) = 1)
+);
+
+create index replies_entry on replies (entry_id, created_at);
+create index replies_post on replies (post_id, created_at);
+
+alter table replies enable row level security;
+create policy r_read   on replies for select using (is_member(workspace_id));
+create policy r_insert on replies for insert with check (is_member(workspace_id));
+
+-- Let users set their own display name.
+create policy prof_update on profiles for update using (id = auth.uid());

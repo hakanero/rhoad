@@ -2,10 +2,6 @@
 
 road from idea to company
 
-A private, shared workspace for an idea-stage company — before it's official.
-Log what's happening as you'd want to anyway; by the time you're ready to
-incorporate, you already have what you need.
-
 ## Setup
 
 1. Create a Supabase project, then run `supabase/schema.sql` in the SQL editor.

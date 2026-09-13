@@ -10,6 +10,7 @@ import Join from './routes/Join'
 import WorkspaceLayout from './routes/WorkspaceLayout'
 import Home from './routes/Home'
 import Pitch from './routes/Pitch'
+import Content from './routes/Content'
 import NextSteps from './routes/NextSteps'
 import Incorporate from './routes/Incorporate'
 import './index.css'
@@ -36,6 +37,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/w/:slug" element={<RequireAuth><WorkspaceLayout /></RequireAuth>}>
             <Route index element={<Home />} />
             <Route path="pitch" element={<Pitch />} />
+            <Route path="content" element={<Content />} />
             <Route path="next" element={<NextSteps />} />
             <Route path="incorporate" element={<Incorporate />} />
           </Route>

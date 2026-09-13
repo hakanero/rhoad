@@ -1,50 +1,73 @@
 import { Link } from 'react-router-dom'
 import { useWs } from '../lib/ctx'
-import { Button } from '../components/ui'
+import { Button, Card, CardHeader, PageHeader } from '../components/ui'
 
 export default function NextSteps() {
   const ws = useWs()
 
   const hasName = !!ws.workspace!.name?.trim()
   const hasPitch = (ws.workspace!.pitch ?? '').trim().length > 0
-  const hasPeople = ws.members.length > 1
-  const hasSpend = ws.entries.some((e) => e.is_expense)
+  const collaborators = ws.members.length - 1
+  const expenses = ws.entries.filter((e) => e.is_expense).length
+  const posts = ws.posts.length
 
-  // Phrased as observations, never as tasks. The two informational rows
-  // deliberately don't gate anything.
-  const rows: [boolean, string, string][] = [
-    [hasName, "you've named it", "this doesn't have a name yet"],
-    [hasPitch, "you've described what it does", "you haven't described what it does yet"],
-    [hasPeople, 'two of you are working on this', "it's just you so far"],
-    [hasSpend, "you've put real money in", 'no money has gone in yet'],
+  // Status, not tasks: each row states what is on record. Only name and
+  // description gate anything; the rest is reported and left alone.
+  const rows = [
+    { label: 'Company name', value: hasName ? ws.workspace!.name : 'Not set', done: hasName },
+    { label: 'Description', value: hasPitch ? 'Written' : 'Not written', done: hasPitch },
+    { label: 'Collaborators', value: collaborators > 0 ? `${collaborators}` : 'None',
+      done: collaborators > 0 },
+    { label: 'Logged expenses', value: expenses > 0 ? `${expenses}` : 'None',
+      done: expenses > 0 },
+    { label: 'Published content', value: posts > 0 ? `${posts}` : 'None', done: posts > 0 },
   ]
 
   const ready = hasName && hasPitch
+  const missing = [!hasName && 'a name', !hasPitch && 'a description'].filter(Boolean)
 
   return (
     <>
-      <ul className="space-y-3">
-        {rows.map(([ok, yes, no], i) => (
-          <li key={i} className="flex items-start gap-3 text-sm">
-            <span className={ok ? 'text-umber' : 'text-muted'}>{ok ? '●' : '○'}</span>
-            <span className={ok ? '' : 'text-muted'}>{ok ? yes : no}</span>
-          </li>
+      <PageHeader
+        title="Next steps"
+        sub="What the workspace has on record, and what it can become."
+      />
+      <div className="grid max-w-3xl grid-cols-[minmax(0,1fr)_320px] gap-5">
+      <Card className="divide-y divide-line self-start">
+        <CardHeader title="On record" />
+        {rows.map((r) => (
+          <div key={r.label} className="flex items-center gap-3 px-4 py-3">
+            <span className={`size-1.5 shrink-0 rounded-full ${
+              r.done ? 'bg-umber' : 'bg-line'}`} />
+            <span className="flex-1 text-sm text-muted">{r.label}</span>
+            <span className={`max-w-[55%] truncate text-sm tabular-nums ${
+              r.done ? 'text-ink' : 'text-muted'}`}>
+              {r.value}
+            </span>
+          </div>
         ))}
-      </ul>
+      </Card>
 
-      {ready && (
-        <div className="mt-10 border-t border-line pt-8">
-          <Link to={`/w/${ws.workspace!.share_slug}/incorporate`}>
-            <Button>Incorporate with Rho</Button>
-          </Link>
+      <Card className="self-start p-5">
+        <p className="text-sm font-medium">Incorporate</p>
+        <p className="mt-1 text-sm text-muted">
+          Rho can take this workspace and file it as a company.
+        </p>
+        <p className="mt-1 text-sm text-muted">
+          {ready
+            ? 'Name, description, and founders will be carried over.'
+            : `Requires ${missing.join(' and ')}.`}
+        </p>
+        <div className="mt-4">
+          {ready ? (
+            <Link to={`/w/${ws.workspace!.share_slug}/incorporate`}>
+              <Button>Incorporate with Rho</Button>
+            </Link>
+          ) : (
+            <Button disabled>Incorporate with Rho</Button>
+          )}
         </div>
-      )}
-
-      <div className="mt-10 border-t border-line pt-6">
-        <p className="text-xs text-muted">Invite link</p>
-        <code className="mt-1 block text-xs break-all text-ink/70">
-          {window.location.origin}/join/{ws.workspace!.share_slug}
-        </code>
+      </Card>
       </div>
     </>
   )

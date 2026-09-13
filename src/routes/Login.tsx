@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Button, Input } from '../components/ui'
+import { Button, Card, Input, Label } from '../components/ui'
 
 export default function Login() {
   const [params] = useSearchParams()
@@ -27,25 +27,31 @@ export default function Login() {
       <h1 className="mb-1 text-2xl tracking-tight lowercase">
         rhoad<span className="text-umber">.</span>
       </h1>
-      <p className="mb-8 text-sm text-muted">a quiet place to keep track of it.</p>
+      <p className="mb-6 text-sm text-muted">Sign in to continue.</p>
+      <Card className="p-5">
 
       {sent ? (
         <p className="text-sm">
-          Check <span className="text-umber">{email}</span> for a link.
+          A sign-in link has been sent to{' '}
+          <span className="text-umber">{email}</span>.
         </p>
       ) : (
         <form onSubmit={send} className="space-y-3">
-          <Input
-            type="email"
-            required
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Button type="submit">Send me a link</Button>
+          <div>
+            <Label>Email address</Label>
+            <Input
+              type="email"
+              required
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <Button type="submit">Send sign-in link</Button>
           {err && <p className="text-sm text-berry">{err}</p>}
         </form>
       )}
+      </Card>
     </div>
   )
 }

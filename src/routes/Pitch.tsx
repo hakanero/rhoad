@@ -1,38 +1,51 @@
 import { useEffect, useRef, useState } from 'react'
 import { useWs } from '../lib/ctx'
 import { supabase } from '../lib/supabase'
-import { Textarea } from '../components/ui'
+import { Card, PageHeader } from '../components/ui'
 
 export default function Pitch() {
   const ws = useWs()
   const [value, setValue] = useState(ws.workspace!.pitch ?? '')
-  const [saved, setSaved] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const first = useRef(true)
 
   useEffect(() => {
     if (first.current) { first.current = false; return }
+    setStatus('saving')
     const t = setTimeout(async () => {
-      await supabase
-        .from('workspaces')
-        .update({ pitch: value })
-        .eq('id', ws.workspace!.id)
+      await supabase.from('workspaces').update({ pitch: value }).eq('id', ws.workspace!.id)
       ws.setPitchLocal(value)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 1500)
+      setStatus('saved')
+      setTimeout(() => setStatus('idle'), 1800)
     }, 600)
     return () => clearTimeout(t)
   }, [value])
 
+  const words = value.trim() ? value.trim().split(/\s+/).length : 0
+
   return (
     <>
-      <p className="mb-3 text-sm text-muted">What this actually is.</p>
-      <Textarea
-        rows={12}
-        value={value}
-        placeholder="say it plainly…"
-        onChange={(e) => setValue(e.target.value)}
+      <PageHeader
+        title="Pitch"
+        sub="What this company does. Posts keep a copy of this as it reads when they're logged."
+        action={
+          <span className="text-xs text-muted tabular-nums">
+            {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' :
+              `${words} ${words === 1 ? 'word' : 'words'}`}
+          </span>
+        }
       />
-      <p className="mt-2 h-4 text-xs text-muted">{saved && 'saved'}</p>
+
+      <Card className="max-w-3xl p-2">
+        <textarea
+          rows={18}
+          value={value}
+          placeholder="Describe the company."
+          onChange={(e) => setValue(e.target.value)}
+          className="w-full resize-none bg-transparent px-4 py-3 text-[15px]
+            leading-relaxed outline-none placeholder:text-faint"
+        />
+      </Card>
     </>
   )
 }

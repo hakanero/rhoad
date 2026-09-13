@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Button, Input } from '../components/ui'
+import { Button, Card, Input, Label } from '../components/ui'
 import type { Workspace } from '../lib/types'
 
 export default function NewWorkspace() {
@@ -22,19 +22,27 @@ export default function NewWorkspace() {
 
   return (
     <div className="mx-auto flex min-h-full max-w-sm flex-col justify-center px-6">
-      <h1 className="mb-6 text-lg tracking-tight">What are you calling it?</h1>
+      <h1 className="mb-1 text-lg tracking-tight">New workspace</h1>
+      <p className="mb-6 text-sm text-muted">
+        A working name is fine; it can change later.
+      </p>
+      <Card className="p-5">
       <form onSubmit={create} className="space-y-3">
-        <Input
-          required
-          placeholder="working name is fine"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        <div>
+          <Label>Company name</Label>
+          <Input
+            required
+            placeholder="Acme"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
         <Button type="submit" disabled={busy}>
-          {busy ? 'Creating…' : 'Create'}
+          {busy ? 'Creating…' : 'Create workspace'}
         </Button>
         {err && <p className="text-sm text-berry">{err}</p>}
       </form>
+      </Card>
     </div>
   )
 }

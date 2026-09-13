@@ -16,7 +16,7 @@ export default function Join() {
 
   return (
     <p className="p-8 text-sm text-muted">
-      {err ? `Couldn't join: ${err}` : 'Joining…'}
+      {err ? `Unable to join this workspace: ${err}` : 'Joining…'}
     </p>
   )
 }

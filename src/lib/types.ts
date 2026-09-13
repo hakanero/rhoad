@@ -43,6 +43,16 @@ export type Post = {
   created_at: string
 }
 
+export type Reply = {
+  id: string
+  workspace_id: string
+  member_id: string
+  entry_id: string | null
+  post_id: string | null
+  text: string
+  created_at: string
+}
+
 export type Totals = {
   invested: number
   queued: number

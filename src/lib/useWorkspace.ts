@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
-import type { Entry, Member, Post, Workspace } from './types'
+import type { Entry, Member, Post, Reply, Workspace } from './types'
 
 export type WorkspaceData = {
   workspace: Workspace | null
   members: Member[]
   entries: Entry[]
   posts: Post[]
+  replies: Reply[]
   invested: number
   queued: number
   perMember: Record<string, number>
@@ -21,6 +22,7 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
   const [members, setMembers] = useState<Member[]>([])
   const [entries, setEntries] = useState<Entry[]>([])
   const [posts, setPosts] = useState<Post[]>([])
+  const [replies, setReplies] = useState<Reply[]>([])
   const [invested, setInvested] = useState(0)
   const [queued, setQueued] = useState(0)
   const [perMember, setPerMember] = useState<Record<string, number>>({})
@@ -49,25 +51,31 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
     }
     setWorkspace(ws)
 
-    const [m, e, p, t, mt] = await Promise.all([
-      supabase.from('members').select('*, profiles(name)').eq('workspace_id', ws.id)
+    const [m, e, p, r, t, mt] = await Promise.all([
+      supabase.from('members').select('*').eq('workspace_id', ws.id)
         .order('created_at'),
       supabase.from('entries').select('*').eq('workspace_id', ws.id)
         .order('created_at', { ascending: false }),
       supabase.from('posts').select('*').eq('workspace_id', ws.id)
         .order('created_at', { ascending: false }),
+      supabase.from('replies').select('*').eq('workspace_id', ws.id)
+        .order('created_at'),
       supabase.from('workspace_totals').select('*').eq('workspace_id', ws.id).maybeSingle(),
       supabase.from('member_totals').select('*').eq('workspace_id', ws.id),
     ])
 
-    setMembers(
-      (m.data ?? []).map((row: any) => ({
-        ...row,
-        name: row.profiles?.name ?? null,
-      })),
-    )
+    // members and profiles both key off auth.users with no FK between
+    // them, so PostgREST can't join. Fetch profiles separately and merge.
+    const rows = m.data ?? []
+    const { data: profiles } = rows.length
+      ? await supabase.from('profiles').select('id, name')
+          .in('id', rows.map((r: any) => r.user_id))
+      : { data: [] }
+    const nameById = new Map((profiles ?? []).map((p: any) => [p.id, p.name]))
+    setMembers(rows.map((row: any) => ({ ...row, name: nameById.get(row.user_id) ?? null })))
     setEntries(e.data ?? [])
     setPosts(p.data ?? [])
+    setReplies(r.data ?? [])
     setInvested(Number(t.data?.invested ?? 0))
     setQueued(Number(t.data?.queued ?? 0))
     setPerMember(
@@ -90,7 +98,7 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
   )
 
   return {
-    workspace, members, entries, posts,
+    workspace, members, entries, posts, replies,
     invested, queued, perMember,
     loading, error, refresh, setPitchLocal,
   }

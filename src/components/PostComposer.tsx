@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { Button, Input } from './ui'
+import { Button, Card, Input, Label, Select } from './ui'
 import type { Member } from '../lib/types'
 
 // pitch_snapshot is deliberately absent here — a DB trigger fills it
@@ -36,35 +36,41 @@ export default function PostComposer({
   }
 
   return (
-    <form onSubmit={submit} className="mb-8 rounded-lg border border-line bg-white/50 p-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <select
-          value={platform}
-          onChange={(e) => setPlatform(e.target.value as typeof platform)}
-          className="rounded-md border border-line bg-white/60 px-2 py-2 text-sm outline-none"
-        >
-          <option value="linkedin">LinkedIn</option>
-          <option value="x">X</option>
-          <option value="other">Other</option>
-        </select>
-        <Input
-          required
-          placeholder="caption or link"
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
-          className="flex-1"
-        />
+    <Card className="mb-4 p-4">
+      <form onSubmit={submit}>
+      <div className="flex flex-wrap items-end gap-3">
+        <div>
+          <Label>Platform</Label>
+          <Select
+            value={platform}
+            onChange={(e) => setPlatform(e.target.value as typeof platform)}
+            className="w-36"
+          >
+            <option value="linkedin">LinkedIn</option>
+            <option value="x">X</option>
+            <option value="other">Other</option>
+          </Select>
+        </div>
+        <div className="min-w-48 flex-1">
+          <Label>Caption or link</Label>
+          <Input
+            required
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+          />
+        </div>
       </div>
       <p className="mt-2 text-xs text-muted">
-        Your pitch as it reads right now gets saved alongside this.
+        The current pitch is saved with this post.
       </p>
       <div className="mt-4 flex items-center gap-3">
         <Button type="submit" disabled={busy || !me}>
-          {busy ? 'Saving…' : 'Log post'}
+          {busy ? 'Saving…' : 'Add post'}
         </Button>
         <Button type="button" variant="quiet" onClick={onCancel}>Cancel</Button>
         {err && <span className="text-sm text-berry">{err}</span>}
       </div>
-    </form>
+      </form>
+    </Card>
   )
 }

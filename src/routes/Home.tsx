@@ -1,139 +1,295 @@
-import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useWs } from '../lib/ctx'
 import Composer from '../components/Composer'
-import PostComposer from '../components/PostComposer'
-import { Dot, money } from '../components/ui'
-import type { Entry, Member, Post } from '../lib/types'
+import Replies from '../components/Replies'
+import {
+  Avatar, Badge, Card, CardHeader, Empty, PageHeader, money, relDate,
+} from '../components/ui'
+import { I } from '../components/icons'
+import type { Entry, Member } from '../lib/types'
 
-type FeedItem =
-  | ({ kind: 'entry' } & Entry)
-  | ({ kind: 'post' } & Post)
+const COLOR_BG: Record<string, string> = {
+  dusk: 'bg-dusk', slate: 'bg-slate', plum: 'bg-plum', berry: 'bg-berry',
+}
 
 export default function Home() {
   const ws = useWs()
-  const [mode, setMode] = useState<'entry' | 'post'>('entry')
   const byId = new Map(ws.members.map((m) => [m.id, m]))
-
-  const feed: FeedItem[] = [
-    ...ws.entries.map((e) => ({ kind: 'entry' as const, ...e })),
-    ...ws.posts.map((p) => ({ kind: 'post' as const, ...p })),
-  ].sort((a, b) => b.created_at.localeCompare(a.created_at))
+  const today = new Date().toLocaleDateString(undefined, {
+    weekday: 'long', month: 'long', day: 'numeric',
+  })
 
   return (
     <>
-      <Totals />
+      <PageHeader title="Home" sub={today} />
+      <Stats />
 
-      {mode === 'entry' ? (
-        <>
+      <div className="grid grid-cols-[minmax(0,1fr)_300px] gap-5">
+        <div>
           <Composer workspaceId={ws.workspace!.id} me={ws.me} onDone={ws.refresh} />
-          <button
-            onClick={() => setMode('post')}
-            className="mb-8 -mt-4 block text-xs text-muted hover:text-ink"
-          >
-            or log a post about it
-          </button>
-        </>
-      ) : (
-        <PostComposer
-          workspaceId={ws.workspace!.id}
-          me={ws.me}
-          onDone={() => { setMode('entry'); ws.refresh() }}
-          onCancel={() => setMode('entry')}
-        />
-      )}
 
-      {feed.length === 0 && (
-        <p className="text-sm text-muted">Nothing logged yet.</p>
-      )}
+          <Card>
+            <CardHeader
+              title="Activity"
+              sub={`${ws.entries.length} ${ws.entries.length === 1 ? 'entry' : 'entries'}`}
+            />
+            {ws.entries.length === 0 ? (
+              <Empty
+                icon={<I.clock />}
+                title="No activity yet"
+                sub="Entries you log appear here, newest first."
+              />
+            ) : (
+              <div className="divide-y divide-line">
+                {ws.entries.map((e) => (
+                  <EntryRow key={e.id} e={e} byId={byId} />
+                ))}
+              </div>
+            )}
+          </Card>
+        </div>
 
-      <ul className="space-y-5">
-        {feed.map((item) => (
-          <li key={item.id} className="border-b border-line pb-5 last:border-0">
-            <Byline member={byId.get(item.member_id)} at={item.created_at} />
-            {item.kind === 'entry' ? <EntryBody e={item} /> : <PostBody p={item} />}
-          </li>
-        ))}
-      </ul>
+        <aside className="space-y-5">
+          <SpendChart />
+          <Contributions />
+          <PitchCard />
+          <RecentContent />
+        </aside>
+      </div>
     </>
   )
 }
 
-function Totals() {
-  const ws = useWs()
-  return (
-    <section className="mb-8">
-      <p className="text-sm">
-        <span className="text-muted">In so far</span>{' '}
-        <span className="text-umber">{money(ws.invested)}</span>
-      </p>
-      {ws.queued > 0 && (
-        <p className="mt-1 text-xs text-muted">
-          {money(ws.queued)} queued once free tiers convert
-        </p>
-      )}
-      {ws.members.length > 1 && (
-        <ul className="mt-3 flex flex-wrap gap-4">
-          {ws.members.map((m) => (
-            <li key={m.id} className="flex items-center gap-2 text-xs text-muted">
-              <Dot color={m.color} />
-              {m.name ?? 'someone'} · {money(ws.perMember[m.id] ?? 0)}
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  )
-}
+/* ---------- top row ---------- */
 
-function Byline({ member, at }: { member?: Member; at: string }) {
+function Stats() {
+  const ws = useWs()
+  const expenses = ws.entries.filter((e) => e.is_expense)
+  const freeTiers = ws.entries.filter((e) => e.is_free_tier)
+  const last = expenses[0]
+
+  const tiles = [
+    {
+      label: 'Total invested', value: money(ws.invested), accent: true,
+      sub: last ? `Last ${relDate(last.created_at).toLowerCase()}` : 'Nothing logged',
+    },
+    {
+      label: 'Queued', value: money(ws.queued),
+      sub: `${freeTiers.length} free ${freeTiers.length === 1 ? 'tier' : 'tiers'} tracked`,
+    },
+    {
+      label: 'Expenses', value: String(expenses.length),
+      sub: `${expenses.filter((e) => e.receipt_url).length} with receipts`,
+    },
+    {
+      label: 'People', value: String(ws.members.length),
+      sub: ws.members.length === 1 ? 'Just you' : 'Contributing',
+    },
+  ]
+
   return (
-    <div className="mb-1.5 flex items-center gap-2 text-xs text-muted">
-      <Dot color={member?.color ?? 'dusk'} />
-      <span>{member?.name ?? 'someone'}</span>
-      <span>·</span>
-      <time>{new Date(at).toLocaleDateString()}</time>
+    <div className="mb-5 grid grid-cols-4 gap-4">
+      {tiles.map((t) => (
+        <Card key={t.label} className="px-4 py-3.5">
+          <p className="text-xs text-muted">{t.label}</p>
+          <p className={`mt-1.5 text-[22px] font-semibold tracking-tight tabular-nums ${
+            t.accent ? 'text-umber' : ''}`}>
+            {t.value}
+          </p>
+          <p className="mt-1 text-xs text-faint">{t.sub}</p>
+        </Card>
+      ))}
     </div>
   )
 }
 
-function EntryBody({ e }: { e: Entry }) {
+/* ---------- right rail ---------- */
+
+function SpendChart() {
+  const ws = useWs()
+  // Last 8 weeks of expense totals, oldest → newest.
+  const weeks = Array.from({ length: 8 }, (_, i) => {
+    const end = new Date(); end.setHours(0, 0, 0, 0)
+    end.setDate(end.getDate() - (7 - i) * 7 + 7)
+    const start = new Date(end); start.setDate(start.getDate() - 7)
+    const sum = ws.entries
+      .filter((e) => e.is_expense && e.amount != null)
+      .filter((e) => { const d = new Date(e.created_at); return d >= start && d < end })
+      .reduce((a, e) => a + Number(e.amount), 0)
+    return { sum, label: start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) }
+  })
+  const max = Math.max(...weeks.map((w) => w.sum), 1)
+
   return (
-    <>
-      <p className="text-sm whitespace-pre-wrap">{e.text}</p>
-      {(e.is_expense || e.is_free_tier) && (
-        <p className="mt-1.5 text-xs text-muted">
-          {e.is_expense && e.amount != null && (
-            <span className="text-umber">{money(Number(e.amount))}</span>
-          )}
-          {e.is_expense && e.is_free_tier && ' · '}
-          {e.is_free_tier && (
-            <span>
-              free now, {e.expected_cost != null && money(Number(e.expected_cost))}
-              {e.converts_at && ` from ${e.converts_at}`}
-            </span>
-          )}
-        </p>
-      )}
-      {e.receipt_url && (
-        <a href={e.receipt_url} target="_blank" rel="noreferrer">
-          <img src={e.receipt_url} alt="receipt"
-            className="mt-2 max-h-40 rounded border border-line" />
-        </a>
-      )}
-    </>
+    <Card>
+      <CardHeader title="Spend" sub="Last 8 weeks" />
+      <div className="px-4 pt-4 pb-3">
+        <div className="flex h-20 items-end gap-1.5">
+          {weeks.map((w, i) => (
+            <div key={i} className="group relative flex flex-1 flex-col justify-end">
+              <div
+                className={`rounded-sm ${w.sum > 0 ? 'bg-umber' : 'bg-sunken'}`}
+                style={{ height: `${Math.max((w.sum / max) * 100, 6)}%` }}
+              />
+              <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2
+                rounded bg-ink px-1.5 py-0.5 text-[10px] whitespace-nowrap text-cream
+                opacity-0 transition-opacity group-hover:opacity-100">
+                {money(w.sum)}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 flex justify-between text-[10px] text-faint">
+          <span>{weeks[0].label}</span>
+          <span>{weeks[7].label}</span>
+        </div>
+      </div>
+    </Card>
   )
 }
 
-function PostBody({ p }: { p: Post }) {
+function Contributions() {
+  const ws = useWs()
+  const max = Math.max(...Object.values(ws.perMember), 1)
   return (
-    <>
-      <p className="text-xs uppercase tracking-wide text-muted">posted on {p.platform}</p>
-      <p className="mt-1 text-sm whitespace-pre-wrap">{p.caption}</p>
-      {p.pitch_snapshot && (
-        <p className="mt-2 border-l-2 border-line pl-3 text-xs text-muted">
-          {p.pitch_snapshot}
-        </p>
+    <Card>
+      <CardHeader title="Contributions" sub="Per person" />
+      <ul className="divide-y divide-line">
+        {ws.members.map((m) => {
+          const v = ws.perMember[m.id] ?? 0
+          return (
+            <li key={m.id} className="px-4 py-2.5">
+              <div className="flex items-center gap-2">
+                <Avatar color={m.color} name={m.name} />
+                <span className="flex-1 truncate text-[13px]">{m.name ?? 'Unnamed'}</span>
+                <span className="text-[13px] tabular-nums">{money(v)}</span>
+              </div>
+              <div className="mt-2 h-1 overflow-hidden rounded-full bg-sunken">
+                <div
+                  className={`h-full rounded-full ${COLOR_BG[m.color] ?? 'bg-dusk'}`}
+                  style={{ width: `${(v / max) * 100}%` }}
+                />
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    </Card>
+  )
+}
+
+function PitchCard() {
+  const ws = useWs()
+  const pitch = (ws.workspace!.pitch ?? '').trim()
+  return (
+    <Card>
+      <CardHeader
+        title="Pitch"
+        action={
+          <Link to={`/w/${ws.workspace!.share_slug}/pitch`}
+            className="text-xs text-muted hover:text-ink">
+            Edit
+          </Link>
+        }
+      />
+      <div className="px-4 py-3">
+        {pitch ? (
+          <p className="line-clamp-4 text-[13px] leading-relaxed text-ink/80">{pitch}</p>
+        ) : (
+          <p className="text-xs text-faint">Not written yet.</p>
+        )}
+      </div>
+    </Card>
+  )
+}
+
+function RecentContent() {
+  const ws = useWs()
+  const recent = ws.posts.slice(0, 3)
+  const P: Record<string, string> = { linkedin: 'LinkedIn', x: 'X', other: 'Other' }
+  return (
+    <Card>
+      <CardHeader
+        title="Content"
+        sub={`${ws.posts.length} published`}
+        action={
+          <Link to={`/w/${ws.workspace!.share_slug}/content`}
+            className="text-xs text-muted hover:text-ink">
+            View all
+          </Link>
+        }
+      />
+      {recent.length === 0 ? (
+        <p className="px-4 py-3 text-xs text-faint">Nothing published yet.</p>
+      ) : (
+        <ul className="divide-y divide-line">
+          {recent.map((p) => (
+            <li key={p.id} className="px-4 py-2.5">
+              <div className="flex items-center gap-2">
+                <Badge>{P[p.platform]}</Badge>
+                <span className="text-[11px] text-faint">{relDate(p.created_at)}</span>
+              </div>
+              <p className="mt-1 truncate text-[13px]">{p.caption}</p>
+            </li>
+          ))}
+        </ul>
       )}
-    </>
+    </Card>
+  )
+}
+
+/* ---------- feed row ---------- */
+
+function EntryRow({ e, byId }: { e: Entry; byId: Map<string, Member> }) {
+  const ws = useWs()
+  const m = byId.get(e.member_id)
+  const replies = ws.replies.filter((r) => r.entry_id === e.id)
+
+  return (
+    <article className="px-4 py-3.5 transition-colors hover:bg-hover/30">
+      <div className="flex gap-3">
+        <Avatar color={m?.color ?? 'dusk'} name={m?.name ?? null} />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="font-medium">{m?.name ?? 'Unnamed'}</span>
+            <span className="text-faint">{relDate(e.created_at)}</span>
+            {e.is_expense && (
+              <span className="ml-auto rounded-md bg-umber/8 px-1.5 py-0.5 text-[12px]
+                font-medium tabular-nums text-umber">
+                {money(Number(e.amount ?? 0))}
+              </span>
+            )}
+          </div>
+
+          <p className="mt-1 text-[13px] leading-relaxed whitespace-pre-wrap">{e.text}</p>
+
+          {(e.is_free_tier || e.receipt_url) && (
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              {e.is_free_tier && <Badge>Free tier</Badge>}
+              {e.is_free_tier && e.expected_cost != null && (
+                <Badge>{money(Number(e.expected_cost))} expected</Badge>
+              )}
+              {e.is_free_tier && e.converts_at && <Badge>Converts {e.converts_at}</Badge>}
+              {e.receipt_url && (
+                <a href={e.receipt_url} target="_blank" rel="noreferrer"
+                  className="inline-flex items-center gap-1 rounded-md bg-sunken px-1.5 py-0.5
+                    text-[11px] font-medium text-muted hover:text-ink">
+                  <I.receipt /> Receipt
+                </a>
+              )}
+            </div>
+          )}
+
+          <Replies
+            workspaceId={ws.workspace!.id}
+            target={{ entry_id: e.id }}
+            replies={replies}
+            members={byId}
+            me={ws.me}
+            onDone={ws.refresh}
+          />
+        </div>
+      </div>
+    </article>
   )
 }
