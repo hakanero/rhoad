@@ -24,7 +24,8 @@ export default function AuthForm({ next = '/workspaces' }: { next?: string }) {
       },
     })
     setBusy(false)
-    error ? setErr(error.message) : setSent(true)
+    if (error) setErr(error.message)
+    else setSent(true)
   }
 
   if (sent)

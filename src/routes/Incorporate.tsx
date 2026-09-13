@@ -71,9 +71,9 @@ export default function Incorporate() {
       {state === 'done' ? (
         <Done name={w.name} filingId={filingId!} slug={slug!} />
       ) : (
-        <div className="mx-auto grid w-full max-w-5xl flex-1 grid-cols-[220px_1fr] gap-12 px-8 py-12">
+        <div className="mx-auto grid w-full max-w-5xl flex-1 grid-cols-1 gap-8 px-5 py-8 md:grid-cols-[220px_1fr] md:gap-12 md:px-8 md:py-12">
           {/* stepper */}
-          <ol className="space-y-1">
+          <ol className="flex gap-1 overflow-x-auto md:block md:space-y-1">
             {STEPS.map((s, i) => (
               <li key={s}>
                 <button
@@ -91,7 +91,7 @@ export default function Incorporate() {
                 </button>
               </li>
             ))}
-            <li className="px-3 pt-6 text-[11px] leading-relaxed text-black/40">
+            <li className="hidden px-3 pt-6 text-[11px] leading-relaxed text-black/40 md:block">
               Fields marked <Tag /> were supplied by your rhoad workspace.
             </li>
           </ol>

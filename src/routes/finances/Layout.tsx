@@ -5,8 +5,7 @@ import { PageHeader } from '../../components/ui'
 const TABS = [
   { to: '', label: 'Expenses', end: true },
   { to: 'income', label: 'Income', end: false },
-  { to: 'budget', label: 'Budget', end: false },
-  { to: 'projection', label: 'Projection', end: false },
+  { to: 'plan', label: 'Plan', end: false },
   { to: 'founders', label: 'Founders', end: false },
 ]
 

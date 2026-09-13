@@ -34,7 +34,7 @@ export default function NextSteps() {
         title="Next steps"
         sub="Information on record and available actions."
       />
-      <div className="grid max-w-3xl grid-cols-[minmax(0,1fr)_320px] gap-5">
+      <div className="grid max-w-3xl grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_320px]">
       <Card className="divide-y divide-line self-start">
         <CardHeader title="On record" />
         {rows.map((r) => (

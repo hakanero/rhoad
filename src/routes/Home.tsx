@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWs } from '../lib/ctx'
 import Composer from '../components/Composer'
 import Replies from '../components/Replies'
+import EntryEditor from '../components/EntryEditor'
 import {
   Avatar, Badge, Card, CardHeader, Empty, PageHeader, money, relDate,
 } from '../components/ui'
@@ -14,6 +16,7 @@ const COLOR_BG: Record<string, string> = {
 
 export default function Home() {
   const ws = useWs()
+  const [editing, setEditing] = useState<Entry | null>(null)
   const byId = new Map(ws.members.map((m) => [m.id, m]))
   const today = new Date().toLocaleDateString(undefined, {
     weekday: 'long', month: 'long', day: 'numeric',
@@ -24,7 +27,7 @@ export default function Home() {
       <PageHeader title="Home" sub={today} />
       <Stats />
 
-      <div className="grid grid-cols-[minmax(0,1fr)_300px] gap-5">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div>
           <Composer workspaceId={ws.workspace!.id} me={ws.me} onDone={ws.refresh} />
 
@@ -42,7 +45,7 @@ export default function Home() {
             ) : (
               <div className="divide-y divide-line">
                 {ws.entries.map((e) => (
-                  <EntryRow key={e.id} e={e} byId={byId} />
+                  <EntryRow key={e.id} e={e} byId={byId} onEdit={() => setEditing(e)} />
                 ))}
               </div>
             )}
@@ -56,6 +59,7 @@ export default function Home() {
           <RecentContent />
         </aside>
       </div>
+      {editing && <EntryEditor entry={editing} onClose={() => setEditing(null)} onDone={ws.refresh} />}
     </>
   )
 }
@@ -65,7 +69,7 @@ export default function Home() {
 function Stats() {
   const ws = useWs()
   const expenses = ws.entries.filter((e) => e.is_expense)
-  const freeTiers = ws.entries.filter((e) => e.is_free_tier)
+  const freeTiers = ws.entries.filter((e) => e.is_upcoming)
   const last = expenses[0]
 
   const tiles = [
@@ -88,7 +92,7 @@ function Stats() {
   ]
 
   return (
-    <div className="mb-5 grid grid-cols-4 gap-4">
+    <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
       {tiles.map((t) => (
         <Card key={t.label} className="px-4 py-3.5">
           <p className="text-xs text-muted">{t.label}</p>
@@ -114,7 +118,7 @@ function SpendChart() {
     const start = new Date(end); start.setDate(start.getDate() - 7)
     const sum = ws.entries
       .filter((e) => e.is_expense && e.amount != null)
-      .filter((e) => { const d = new Date(e.created_at); return d >= start && d < end })
+      .filter((e) => { const d = new Date(e.occurred_at + 'T00:00'); return d >= start && d < end })
       .reduce((a, e) => a + Number(e.amount), 0)
     return { sum, label: start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) }
   })
@@ -240,19 +244,26 @@ function RecentContent() {
 
 /* ---------- feed row ---------- */
 
-function EntryRow({ e, byId }: { e: Entry; byId: Map<string, Member> }) {
+function EntryRow({ e, byId, onEdit }: { e: Entry; byId: Map<string, Member>; onEdit: () => void }) {
   const ws = useWs()
   const m = byId.get(e.member_id)
   const replies = ws.replies.filter((r) => r.entry_id === e.id)
 
   return (
-    <article className="px-4 py-3.5 transition-colors hover:bg-hover/30">
+    <article className="group px-4 py-3.5 transition-colors hover:bg-hover/30">
       <div className="flex gap-3">
         <Avatar color={m?.color ?? 'dusk'} name={m?.name ?? null} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 text-xs">
             <span className="font-medium">{m?.name ?? 'Unnamed'}</span>
             <span className="text-faint">{relDate(e.created_at)}</span>
+            {(e.is_expense || e.is_income) && e.occurred_at !== e.created_at.slice(0, 10) && (
+              <span className="text-faint">· dated {e.occurred_at}</span>
+            )}
+            <button onClick={onEdit} title="Edit"
+              className="rounded p-0.5 text-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-hover hover:text-ink">
+              <I.edit />
+            </button>
             {e.is_expense && (
               <span className="ml-auto rounded-md bg-umber/8 px-1.5 py-0.5 text-[12px]
                 font-medium tabular-nums text-umber">
@@ -269,12 +280,12 @@ function EntryRow({ e, byId }: { e: Entry; byId: Map<string, Member> }) {
 
           <p className="mt-1 text-[13px] leading-relaxed whitespace-pre-wrap">{e.text}</p>
 
-          {(e.is_free_tier || e.receipt_url) && (
+          {(e.is_upcoming || e.receipt_url) && (
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              {e.is_free_tier && (
+              {e.is_upcoming && (
                 <Badge>
-                  Upcoming{e.expected_cost != null && ` · ${money(Number(e.expected_cost))}`}
-                  {e.converts_at && ` from ${e.converts_at}`}
+                  Upcoming{e.upcoming_amount != null && ` · ${money(Number(e.upcoming_amount))}`}
+                  {e.upcoming_from && ` from ${e.upcoming_from}`}
                 </Badge>
               )}
               {e.receipt_url && (

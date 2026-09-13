@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useWs } from '../lib/ctx'
+import { supabase } from '../lib/supabase'
 import PostComposer from '../components/PostComposer'
 import Replies from '../components/Replies'
 import { Avatar, Badge, Button, Card, Empty, PageHeader, relDate } from '../components/ui'
@@ -12,6 +13,12 @@ const PLATFORM: Record<string, string> = {
 export default function Content() {
   const ws = useWs()
   const [composing, setComposing] = useState(false)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+  async function remove(id: string) {
+    await supabase.from('posts').delete().eq('id', id)
+    setConfirmId(null)
+    ws.refresh()
+  }
   const byId = new Map(ws.members.map((m) => [m.id, m]))
 
   const counts = ws.posts.reduce<Record<string, number>>((acc, p) => {
@@ -63,15 +70,26 @@ export default function Content() {
           {ws.posts.map((p) => {
             const m = byId.get(p.member_id)
             return (
-              <article key={p.id} className="px-4 py-3.5 transition-colors hover:bg-hover/40">
+              <article key={p.id} className="group px-4 py-3.5 transition-colors hover:bg-hover/40">
                 <div className="flex gap-2.5">
                   <Avatar color={m?.color ?? 'dusk'} name={m?.name ?? null} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 text-xs text-muted">
                       <span className="text-ink">{m?.name ?? 'Unnamed'}</span>
                       <span>{relDate(p.created_at)}</span>
-                      <span className="ml-auto">
+                      <span className="ml-auto flex items-center gap-2">
                         <Badge>{PLATFORM[p.platform] ?? p.platform}</Badge>
+                        {confirmId === p.id ? (
+                          <span className="flex items-center gap-1.5 text-[11px]">
+                            <button onClick={() => remove(p.id)} className="font-medium text-berry">Delete</button>
+                            <button onClick={() => setConfirmId(null)} className="text-muted">Keep</button>
+                          </span>
+                        ) : (
+                          <button onClick={() => setConfirmId(p.id)} title="Delete"
+                            className="rounded p-0.5 text-faint opacity-0 transition-opacity group-hover:opacity-100 hover:text-berry">
+                            <I.trash />
+                          </button>
+                        )}
                       </span>
                     </div>
 

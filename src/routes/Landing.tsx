@@ -33,13 +33,13 @@ export default function Landing() {
         </nav>
       </header>
 
-      <section className="mx-auto grid max-w-5xl grid-cols-[1.3fr_1fr] gap-16 px-8 pt-16 pb-16">
+      <section className="mx-auto grid max-w-5xl grid-cols-1 gap-10 px-6 pt-10 pb-12 md:grid-cols-[1.3fr_1fr] md:gap-16 md:px-8 md:pt-16 md:pb-16">
         <div>
-          <p className="text-[64px] leading-none font-semibold lowercase tracking-tighter">
+          <p className="text-[48px] leading-none font-semibold lowercase tracking-tighter md:text-[64px]">
             rhoad<span className="text-umber">.</span>
           </p>
           <p className="mt-3 text-[15px] text-umber">road from idea to company</p>
-          <h1 className="mt-8 text-[34px] leading-[1.12] font-semibold tracking-tight">
+          <h1 className="mt-8 text-[28px] leading-[1.12] font-semibold tracking-tight md:text-[34px]">
             The workspace for a company before incorporation.
           </h1>
           <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted">
@@ -74,7 +74,7 @@ export default function Landing() {
       </section>
 
       <section className="mx-auto max-w-5xl px-8 pb-20">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {FEATURES.map((f) => (
             <Card key={f.title} className="p-5">
               <span className="flex size-8 items-center justify-center rounded-lg bg-sunken
@@ -87,7 +87,7 @@ export default function Landing() {
       </section>
 
       <section className="border-t border-line">
-        <div className="mx-auto grid max-w-5xl grid-cols-[1fr_1.2fr] gap-12 px-8 py-16">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-6 py-12 md:grid-cols-[1fr_1.2fr] md:gap-12 md:px-8 md:py-16">
           <div>
             <p className="text-xs font-medium tracking-wide text-faint uppercase">Incorporation</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">

@@ -90,6 +90,22 @@ export function SectionHeader({
   )
 }
 
+// Compact figures row for secondary pages, in place of a tile grid.
+export function Figures({ items }: { items: { label: string; value: string; accent?: boolean }[] }) {
+  return (
+    <dl className="mb-5 flex flex-wrap gap-x-8 gap-y-2">
+      {items.map((i) => (
+        <div key={i.label}>
+          <dt className="text-[11px] text-muted">{i.label}</dt>
+          <dd className={`text-[17px] font-semibold tracking-tight tabular-nums ${i.accent ? 'text-umber' : ''}`}>
+            {i.value}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
 export function Empty({ icon, title, sub }: {
   icon?: React.ReactNode; title: string; sub?: string
 }) {

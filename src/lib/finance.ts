@@ -14,17 +14,17 @@ export type MonthRow = {
 // Six months of committed spend from upcoming costs. A cost is active
 // from its start month (or now, if none) onward.
 export function projectMonths(entries: Entry[], months = 6, from = new Date()): MonthRow[] {
-  const upcoming = entries.filter((e) => e.is_free_tier && e.expected_cost != null)
+  const upcoming = entries.filter((e) => e.is_upcoming && e.upcoming_amount != null)
   const rows: MonthRow[] = []
   for (let i = 0; i < months; i++) {
     const d = new Date(from.getFullYear(), from.getMonth() + i, 1)
     const end = new Date(d.getFullYear(), d.getMonth() + 1, 1)
     const items = upcoming
       .filter((e) => {
-        const start = e.converts_at ? new Date(e.converts_at) : new Date(0)
+        const start = e.upcoming_from ? new Date(e.upcoming_from) : new Date(0)
         return start < end
       })
-      .map((e) => ({ text: e.text, amount: Number(e.expected_cost) }))
+      .map((e) => ({ text: e.text, amount: Number(e.upcoming_amount) }))
     rows.push({
       key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
       label: d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' }),
@@ -70,14 +70,14 @@ export function ledgerCsv(entries: Entry[], byId: Map<string, Member>): string {
   const head = ['date', 'type', 'description', 'category', 'member', 'source', 'amount',
     'reimbursed_at', 'upcoming_amount', 'upcoming_from', 'receipt_url']
   const rows = entries
-    .filter((e) => e.is_expense || e.is_free_tier || e.is_income)
+    .filter((e) => e.is_expense || e.is_upcoming || e.is_income)
     .map((e) => [
-      e.created_at.slice(0, 10), e.is_income ? 'income' : 'expense', e.text, e.category,
+      e.occurred_at, e.is_income ? 'income' : 'expense', e.text, e.category,
       byId.get(e.member_id)?.name ?? '', e.source ?? '',
       e.is_expense || e.is_income ? Number(e.amount ?? 0).toFixed(2) : '',
       e.reimbursed_at?.slice(0, 10) ?? '',
-      e.is_free_tier && e.expected_cost != null ? Number(e.expected_cost).toFixed(2) : '',
-      e.converts_at ?? '', e.receipt_url ?? '',
+      e.is_upcoming && e.upcoming_amount != null ? Number(e.upcoming_amount).toFixed(2) : '',
+      e.upcoming_from ?? '', e.receipt_url ?? '',
     ])
   return [head, ...rows].map((r) => r.map(esc).join(',')).join('\n')
 }

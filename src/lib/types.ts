@@ -42,13 +42,14 @@ export type Entry = {
   is_expense: boolean
   amount: number | null
   receipt_url: string | null
-  is_free_tier: boolean
-  expected_cost: number | null
-  converts_at: string | null
+  is_upcoming: boolean
+  upcoming_amount: number | null
+  upcoming_from: string | null
   category: Category
   reimbursed_at: string | null
   is_income: boolean
   source: string | null
+  occurred_at: string
   created_at: string
 }
 

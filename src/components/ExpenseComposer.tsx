@@ -9,6 +9,7 @@ export default function ExpenseComposer({
   const [text, setText] = useState('')
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState<Category>('software')
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [file, setFile] = useState<File | null>(null)
   const [upcoming, setUpcoming] = useState(false)
   const [expected, setExpected] = useState('')
@@ -30,24 +31,25 @@ export default function ExpenseComposer({
       receipt_url = supabase.storage.from('receipts').getPublicUrl(path).data.publicUrl
     }
 
-    // Column names predate the rename: is_free_tier / expected_cost /
-    // converts_at now mean "has an upcoming cost" / amount / start date.
+    // Column names predate the rename: is_upcoming / upcoming_amount /
+    // upcoming_from now mean "has an upcoming cost" / amount / start date.
     const { error } = await supabase.from('entries').insert({
       workspace_id: workspaceId,
       member_id: me.id,
       text,
       category,
+      occurred_at: date,
       is_expense: amount !== '',
       amount: amount !== '' ? Number(amount) : null,
       receipt_url,
-      is_free_tier: upcoming,
-      expected_cost: upcoming && expected ? Number(expected) : null,
-      converts_at: upcoming && startsAt ? startsAt : null,
+      is_upcoming: upcoming,
+      upcoming_amount: upcoming && expected ? Number(expected) : null,
+      upcoming_from: upcoming && startsAt ? startsAt : null,
     })
     setBusy(false)
     if (error) return setErr(error.message)
 
-    setText(''); setAmount(''); setFile(null)
+    setText(''); setAmount(''); setFile(null); setDate(new Date().toISOString().slice(0, 10))
     setUpcoming(false); setExpected(''); setStartsAt('')
     onDone()
   }
@@ -55,11 +57,15 @@ export default function ExpenseComposer({
   return (
     <Card className="mb-5 p-4">
       <form onSubmit={submit}>
-        <div className="grid grid-cols-[minmax(0,1fr)_150px_140px] gap-3">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-[minmax(0,1fr)_140px_150px_130px]">
           <div>
             <Label>Description</Label>
             <Input required placeholder="Domain, subscription, tool…"
               value={text} onChange={(e) => setText(e.target.value)} />
+          </div>
+          <div>
+            <Label>Date</Label>
+            <Input type="date" required value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
           <div>
             <Label>Category</Label>

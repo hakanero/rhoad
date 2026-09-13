@@ -36,44 +36,35 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
   const refresh = useCallback(async () => {
     if (!slug) return
     const { data: ws, error: wsErr } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('share_slug', slug)
-      .maybeSingle()
+      .from('workspaces').select('*').eq('share_slug', slug).maybeSingle()
 
-    if (wsErr) {
-      setError(wsErr.message)
-      setLoading(false)
-      return
-    }
+    if (wsErr) { setError(wsErr.message); setLoading(false); return }
     // RLS hides workspaces you aren't a member of, so "not found" and
     // "not yours" are the same case here — both mean: you need an invite.
-    if (!ws) {
-      setError('not-a-member')
-      setLoading(false)
-      return
-    }
+    if (!ws) { setError('not-a-member'); setLoading(false); return }
     setWorkspace(ws)
 
     const [m, e, p, r, t, mt] = await Promise.all([
-      supabase.from('members').select('*').eq('workspace_id', ws.id)
-        .order('created_at'),
+      supabase.from('members').select('*').eq('workspace_id', ws.id).order('created_at'),
       supabase.from('entries').select('*').eq('workspace_id', ws.id)
         .order('created_at', { ascending: false }),
       supabase.from('posts').select('*').eq('workspace_id', ws.id)
         .order('created_at', { ascending: false }),
-      supabase.from('replies').select('*').eq('workspace_id', ws.id)
-        .order('created_at'),
+      supabase.from('replies').select('*').eq('workspace_id', ws.id).order('created_at'),
       supabase.from('workspace_totals').select('*').eq('workspace_id', ws.id).maybeSingle(),
       supabase.from('member_totals').select('*').eq('workspace_id', ws.id),
     ])
+
+    // Any one of these failing (a missing table, a bad policy) used to
+    // render as an empty feed. Surface it instead.
+    const failed = [m, e, p, r, t, mt].find((x) => x.error)
+    if (failed?.error) { setError(failed.error.message); setLoading(false); return }
 
     // members and profiles both key off auth.users with no FK between
     // them, so PostgREST can't join. Fetch profiles separately and merge.
     const rows = m.data ?? []
     const { data: profiles } = rows.length
-      ? await supabase.from('profiles').select('id, name')
-          .in('id', rows.map((r: any) => r.user_id))
+      ? await supabase.from('profiles').select('id, name').in('id', rows.map((r: any) => r.user_id))
       : { data: [] }
     const nameById = new Map((profiles ?? []).map((p: any) => [p.id, p.name]))
     setMembers(rows.map((row: any) => ({ ...row, name: nameById.get(row.user_id) ?? null })))
@@ -83,36 +74,37 @@ export function useWorkspace(slug: string | undefined): WorkspaceData {
     setInvested(Number(t.data?.invested ?? 0))
     setQueued(Number(t.data?.queued ?? 0))
     setReceived(Number(t.data?.received ?? 0))
-    setPerMember(
-      Object.fromEntries(
-        (mt.data ?? []).map((r: any) => [r.member_id, {
-          invested: Number(r.invested),
-          reimbursed: Number(r.reimbursed),
-          outstanding: Number(r.outstanding),
-        }]),
-      ),
-    )
+    setPerMember(Object.fromEntries((mt.data ?? []).map((r: any) => [r.member_id, {
+      invested: Number(r.invested), reimbursed: Number(r.reimbursed), outstanding: Number(r.outstanding),
+    }])))
     setError(null)
     setLoading(false)
   }, [slug])
 
+  useEffect(() => { refresh() }, [refresh])
+
+  // Live updates: any change in this workspace's tables refetches. RLS
+  // scopes the subscription, so members only hear their own workspace.
   useEffect(() => {
-    setLoading(true)
-    refresh()
-  }, [refresh])
+    if (!workspace?.id) return
+    const filter = `workspace_id=eq.${workspace.id}`
+    const ch = supabase.channel(`ws:${workspace.id}`)
+    for (const table of ['entries', 'posts', 'replies', 'members']) {
+      ch.on('postgres_changes', { event: '*', schema: 'public', table, filter }, () => refresh())
+    }
+    ch.on('postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'workspaces', filter: `id=eq.${workspace.id}` },
+      () => refresh())
+    ch.subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [workspace?.id, refresh])
 
   const setPitchLocal = useCallback(
-    (pitch: string) => setWorkspace((w) => (w ? { ...w, pitch } : w)),
-    [],
-  )
+    (pitch: string) => setWorkspace((w) => (w ? { ...w, pitch } : w)), [])
   const patchWorkspace = useCallback(
-    (patch: Partial<Workspace>) => setWorkspace((w) => (w ? { ...w, ...patch } : w)),
-    [],
-  )
+    (patch: Partial<Workspace>) => setWorkspace((w) => (w ? { ...w, ...patch } : w)), [])
   const setIdentityLocal = useCallback(
-    (identity: Identity) => setWorkspace((w) => (w ? { ...w, identity } : w)),
-    [],
-  )
+    (identity: Identity) => setWorkspace((w) => (w ? { ...w, identity } : w)), [])
 
   return {
     workspace, members, entries, posts, replies,

@@ -301,3 +301,22 @@ group by workspace_id;
 -- flow that now lives in Rho; safe to drop.
 alter table entries drop column if exists reimbursement_ref;
 alter table workspaces drop column if exists incorporated_at;
+
+-- cleanup pass ---------------------------------------------------------
+-- Column names now say what they mean. Dependent views follow renames.
+alter table entries rename column is_free_tier to is_upcoming;
+alter table entries rename column expected_cost to upcoming_amount;
+alter table entries rename column converts_at to upcoming_from;
+
+-- When the money actually moved, independent of when it was logged.
+alter table entries add column if not exists occurred_at date not null default current_date;
+update entries set occurred_at = created_at::date where occurred_at = current_date;
+
+-- Members can correct and remove what's in their workspace.
+create policy e_delete on entries for delete using (is_member(workspace_id));
+create policy p_update on posts   for update using (is_member(workspace_id));
+create policy p_delete on posts   for delete using (is_member(workspace_id));
+create policy r_delete on replies for delete using (is_member(workspace_id));
+
+-- Live updates between members.
+alter publication supabase_realtime add table entries, posts, replies, members, workspaces;

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useWs } from '../lib/ctx'
 import { supabase } from '../lib/supabase'
 import { Card, CardHeader, PageHeader } from '../components/ui'
-import { I } from '../components/icons'
 import type { Identity, IdentityKey } from '../lib/types'
 
 const SECTIONS: { key: IdentityKey; title: string; hint: string; rows: number }[] = [
@@ -12,10 +11,6 @@ const SECTIONS: { key: IdentityKey; title: string; hint: string; rows: number }[
     hint: 'The product or service, described concretely.' },
   { key: 'who', title: 'Who it is for', rows: 3,
     hint: 'The initial customer segment.' },
-  { key: 'model', title: 'How it makes money', rows: 3,
-    hint: 'Revenue model, if determined.' },
-  { key: 'stage', title: 'Where it is now', rows: 3,
-    hint: 'Current stage: idea, prototype, initial users, or revenue.' },
 ]
 
 export default function Pitch() {
@@ -40,11 +35,7 @@ export default function Pitch() {
       setTimeout(() => setStatus('idle'), 1800)
     }, 700)
     return () => clearTimeout(t)
-  }, [oneLiner, identity])
-
-  const filled = [oneLiner, ...SECTIONS.map((s) => identity[s.key] ?? '')]
-    .filter((v) => v.trim()).length
-  const total = SECTIONS.length + 1
+  }, [oneLiner, identity]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const set = (k: IdentityKey, v: string) => setIdentity((i) => ({ ...i, [k]: v }))
 
@@ -52,7 +43,7 @@ export default function Pitch() {
     <>
       <PageHeader
         title="Pitch"
-        sub="The business purpose, and the longer profile behind it."
+        sub="The business purpose, and the profile behind it. Sections are optional."
         action={
           <span className="text-xs text-muted tabular-nums">
             {status === 'saving' ? 'Saving…' : status === 'saved' ? 'Saved' : ''}
@@ -60,7 +51,7 @@ export default function Pitch() {
         }
       />
 
-      <div className="grid grid-cols-[minmax(0,1fr)_280px] gap-5">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_260px]">
         <div className="space-y-4">
           <Card>
             <CardHeader
@@ -97,28 +88,6 @@ export default function Pitch() {
         </div>
 
         <aside className="space-y-5">
-          <Card>
-            <CardHeader title="Completeness" sub={`${filled} of ${total} sections`} />
-            <div className="px-4 pt-3 pb-1">
-              <div className="h-1 overflow-hidden rounded-full bg-sunken">
-                <div className="h-full rounded-full bg-umber transition-all"
-                  style={{ width: `${(filled / total) * 100}%` }} />
-              </div>
-            </div>
-            <ul className="px-4 py-3 text-[13px]">
-              {[{ title: 'Business purpose', done: !!oneLiner.trim() },
-                ...SECTIONS.map((s) => ({ title: s.title, done: !!(identity[s.key] ?? '').trim() }))
-              ].map((r) => (
-                <li key={r.title} className="flex items-center gap-2 py-1">
-                  <span className={r.done ? 'text-umber' : 'text-faint'}>
-                    {r.done ? <I.check /> : <span className="block size-4" />}
-                  </span>
-                  <span className={r.done ? '' : 'text-muted'}>{r.title}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-
           <Card>
             <CardHeader title="Where this is used" />
             <ul className="divide-y divide-line text-[13px]">

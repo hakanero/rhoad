@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { Avatar, relDate } from './ui'
+import { I } from './icons'
 import type { Member, Reply } from '../lib/types'
 
 export default function Replies({
@@ -16,6 +17,11 @@ export default function Replies({
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
+
+  async function remove(id: string) {
+    await supabase.from('replies').delete().eq('id', id)
+    onDone()
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -36,11 +42,17 @@ export default function Replies({
           {replies.map((r) => {
             const m = members.get(r.member_id)
             return (
-              <li key={r.id} className="flex gap-2">
+              <li key={r.id} className="group/r flex gap-2">
                 <Avatar color={m?.color ?? 'dusk'} name={m?.name ?? null} />
-                <div className="min-w-0">
-                  <p className="text-xs text-muted">
+                <div className="min-w-0 flex-1">
+                  <p className="flex items-center gap-1.5 text-xs text-muted">
                     {m?.name ?? 'Unnamed'} · {relDate(r.created_at)}
+                    {r.member_id === me?.id && (
+                      <button onClick={() => remove(r.id)} title="Delete reply"
+                        className="rounded p-0.5 text-faint opacity-0 transition-opacity group-hover/r:opacity-100 hover:text-berry">
+                        <I.trash />
+                      </button>
+                    )}
                   </p>
                   <p className="text-sm whitespace-pre-wrap">{r.text}</p>
                 </div>

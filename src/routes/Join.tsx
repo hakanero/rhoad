@@ -10,7 +10,8 @@ export default function Join() {
   useEffect(() => {
     // Idempotent: re-clicking an invite link just lands you back inside.
     supabase.rpc('join_workspace', { slug }).then(({ error }) => {
-      error ? setErr(error.message) : nav(`/w/${slug}`, { replace: true })
+      if (error) setErr(error.message)
+      else nav(`/w/${slug}`, { replace: true })
     })
   }, [slug, nav])
 
