@@ -2,7 +2,7 @@ export type MemberColor = 'dusk' | 'slate' | 'plum' | 'berry'
 
 export const MEMBER_COLORS: MemberColor[] = ['dusk', 'slate', 'plum', 'berry']
 
-export type IdentityKey = 'problem' | 'what' | 'who' | 'model' | 'stage'
+export type IdentityKey = 'problem' | 'what' | 'who'
 export type Identity = Partial<Record<IdentityKey, string>>
 
 export type Workspace = {

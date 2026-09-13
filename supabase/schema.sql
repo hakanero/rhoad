@@ -320,3 +320,26 @@ create policy r_delete on replies for delete using (is_member(workspace_id));
 
 -- Live updates between members.
 alter publication supabase_realtime add table entries, posts, replies, members, workspaces;
+
+-- Snapshot labels match the trimmed pitch page.
+create or replace function snapshot_pitch() returns trigger
+language plpgsql as $$
+declare
+  ws workspaces;
+  parts text[] := '{}';
+  k text;
+  labels jsonb := '{"problem":"The problem","what":"What it does","who":"Who it is for"}'::jsonb;
+begin
+  select * into ws from workspaces where id = new.workspace_id;
+  if coalesce(ws.pitch, '') <> '' then
+    parts := parts || ws.pitch;
+  end if;
+  for k in select jsonb_object_keys(labels) loop
+    if coalesce(ws.identity ->> k, '') <> '' then
+      parts := parts || ((labels ->> k) || chr(10) || (ws.identity ->> k));
+    end if;
+  end loop;
+  new.pitch_snapshot := nullif(array_to_string(parts, chr(10) || chr(10)), '');
+  return new;
+end
+$$;
